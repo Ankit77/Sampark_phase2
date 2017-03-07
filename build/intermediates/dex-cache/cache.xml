@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.4.0_23436c388a783c55204485036fe2cdc0cbf0b150.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.4.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\com.android.support-animated-vector-drawable-23.4.0_786749741e13d1941dc253e968f450e6c583c7d1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\libs\httpcore-4.3.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="31fbbff1ddbf98f3aa7377c94d33b0447c646b6e">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\httpcore-4.3.2_7994e16cd18bb8e4b20d089479e627c83db5da10.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\libs\httpmime-4.3.4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="54ffde537682aea984c22fbcf0106f21397c5f9b">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\httpmime-4.3.4_099bdc6add6f6a56b3ab870b3deded0c603e652f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-maps\8.1.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="2a7e47da654546f9457deb6132364f1bf33a1857">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-maps-8.1.0_231aed18f5101c4b1c486912e13a6c795ec13e54.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\libs\commons-codec.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="fd32786786e2adb664d5ecc965da47629dca14ba">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\commons-codec_29680e7542320f7e155aab19dba959f2e86ec49f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\libs\httpclient-cache-4.3.4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="ad6c1e2533fe6099e8c8ca182914dd025425f24d">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\httpclient-cache-4.3.4_827d4637de98361b8adb9d5ec472bec2c12bb9bc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\8.1.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="82825756edeeb3b56b15e73b2edd56e93da5a444">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-base-8.1.0_ba06018eadaab61a0ea015c530fbad145f963d92.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.4.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="548f06de403a9409f00554b3ee12a9fdea0e236c">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.4.0_496448c9e9826a1bfcccc75258cf58098e4c3dd4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\libs\internal_impl-23.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\internal_impl-23.4.0_f893755bd9427ab53f368bcc5026accfa38b098e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-location\8.1.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="3aed37c38c56679602255dd72ef356da5d327cda">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-location-8.1.0_289362a7ca7dcd87eb8bbf4585557c27fcbc71b4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\E-sampark_phase2\library\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="34c364a3d663269960fa8e4d3c61f2233dfb9539">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\E-sampark_phase2-library-unspecified_3f1a917abdadb4e9b39d841375f5e896947e6451.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\libs\sqlcipher.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="7c802fb62d64c80dd5f6972a4533720423ff9ad8">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\sqlcipher_8f1919c9d96cd77ff93bcd0d924974a97c329d28.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-gcm\8.1.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="dcb5b75baf05d92e61d5706737200ee55949f97b">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-gcm-8.1.0_f00673671857272d67ecddcc4c26d049dd849938.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.1.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="d0dda274b703dd9c5bb056867649d22b4171ae7d">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-basement-8.1.0_34959d0d812c782a144ced2d3f9e6f090acc4f57.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.4.0\support-annotations-23.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\support-annotations-23.4.0_8028dfe3be197b741d6cb061f70adbc0413dc2bb.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Program Files\Android\Android Studio1\gradle\m2repository\com\google\guava\guava\18.0\guava-18.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="cce0823396aa693798f8882e64213b1772032b09">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\guava-18.0_ff6253b174b00639644f6a188fbbc875e1f0ce4c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.4.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="c2c594cace5d83a3227b2b6e658ecbfd586d3ed9">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\com.android.support-support-vector-drawable-23.4.0_304c04514e80fa50439365a72bed1de79a5dd8ef.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\libs\httpclient-4.3.4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="a9a1fef2faefed639ee0d0fba5b3b8e4eb2ff2d8">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\httpclient-4.3.4_5c27bd227f70077c534695635208ec9c288d90e3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\libs\commons-net-3.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="cd0d5510908225f76c5fe5a3f1df4fa44866f81e">
+        <dex dex="E:\Symphony\E-sampark_phase2\E-sampark_phase2\app\build\intermediates\pre-dexed\debug\commons-net-3.3_e7a66629903b265393b89f75f7c7624e78138807.jar" />
+    </item>
+
+</items>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+ 	android:background="@android:color/transparent"
+ 	android:orientation="horizontal"
+ 	
+    >
+    
+    <View 
+	        
+	        android:layout_width="5dip"
+	    	android:layout_height="fill_parent"
+	    	android:id="@+id/notificationReportBar"
+	    	android:background="@drawable/highlight_list_item"
+	    	
+	        
+	     />
+	<RelativeLayout 
+	   android:layout_width="match_parent"
+	   android:layout_height="fill_parent"
+	   android:orientation="vertical"
+	   android:padding="10dip"
+	   android:background="@drawable/list_item_border"
+	   
+	    
+	    >
+	
+	    
+	    
+	   
+	       <TextView 
+	        
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:id="@+id/notificationMessage"
+	    	android:textColor="@color/text_white"
+	    	android:textSize="18sp"
+	        android:textStyle="bold"
+	        android:ellipsize="none"
+
+				     
+	      />
+	       
+	 
+	      <TextView 
+	        
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:id="@+id/notificationReportTime"
+	    	android:layout_below="@+id/notificationMessage"
+	    	android:textColor="@color/text_white"
+	    	android:textSize="16sp"
+	
+				     
+	      />
+	
+	</RelativeLayout>
+</LinearLayout>

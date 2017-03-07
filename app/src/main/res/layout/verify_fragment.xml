@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/home_screen_pad"
+	android:gravity="center_vertical"
+	android:background="@drawable/backgroundapp">
+	
+    
+     <TextView
+      
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:text="@string/verify_registration_text"
+       android:gravity="center"
+       android:textSize="@dimen/verify_textview_size"
+	   android:textColor="@color/edit_text_color_blue"
+	   android:id="@+id/verifyRegistrationText"
+       
+    />	
+    
+<LinearLayout 
+    
+    android:layout_width="300dip"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:paddingTop="30dip"
+    android:id="@+id/otpLayout"
+    >
+    
+    <LinearLayout 
+    
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_gravity="center_vertical"
+    android:visibility="gone"
+    android:gravity="center_vertical"
+    android:id="@+id/verifyStatusLayout"
+    android:layout_marginBottom="10dip"
+    >
+    
+     <ImageView
+      
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:id="@+id/verifyStatusIcon"
+       
+    />	
+       
+  <TextView
+      
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:text="@string/verify_success_text"
+       android:textSize="@dimen/verify_status"
+       android:id="@+id/verifyStatus"
+       android:layout_marginLeft="5dip"
+  
+   	        
+       
+       
+    />	
+  
+  </LinearLayout>
+ 
+ 
+
+  <Button 
+      
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       
+        android:text="NEXT"
+       
+	    android:id="@+id/nextBtn"
+	    android:visibility="gone"
+	   
+	    android:background="@drawable/button_border"
+    	android:textColor="@color/text_blue"
+    	android:textStyle="bold"
+    	android:shadowColor="@color/text_white" 
+   		android:shadowDx="-1"
+		android:shadowDy="1" 
+		android:shadowRadius="0.04"
+		android:gravity="center"
+		android:layout_gravity="center"
+  />
+  
+ <EditText
+    
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/otpField"
+    android:layout_marginTop="@dimen/register_edit_top_margin"
+    android:layout_marginBottom="@dimen/register_edit_bottom_margin"
+    	    
+    android:background="#c6e9f9"
+    android:padding="10dip"
+    android:textColor="@color/edit_text_color_blue"
+    android:inputType="number"
+    android:maxLength="5"
+    
+		    
+    />
+
+ <Button
+    
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/verifyBtn"
+    android:text="@string/verify_button"
+    android:layout_marginTop="@dimen/register_button_top_margin"
+	
+    android:background="@drawable/button_border"
+    android:textColor="@color/text_blue"
+    android:textStyle="bold"
+    android:shadowColor="@color/text_white" 
+   	android:shadowDx="-1"
+	android:shadowDy="1" 
+	android:shadowRadius="0.04"
+	android:gravity="center"
+	android:layout_gravity="center"
+    />
+ 
+ 
+ <Button
+    
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/resendBtn"
+    
+    
+    android:background="@drawable/selected_req_otp_btn"
+    android:text="@string/resend_button"
+    android:layout_marginTop="@dimen/register_button_top_margin"
+    android:textColor="@color/text_green"
+    android:textStyle="bold"
+    />
+ 
+ </LinearLayout>
+ 
+    
+  
+  
+ </LinearLayout>

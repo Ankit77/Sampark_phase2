@@ -1,0 +1,81 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/backgroundapp"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="@dimen/home_screen_pad" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" 
+>
+
+        <LinearLayout
+            android:layout_width="300dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical" 
+            android:paddingTop="10dip">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/register_text_bottom_margin"
+                android:layout_marginTop="@dimen/register_text_top_margin"
+                android:text="@string/register_username_text"
+                android:textColor="@color/edit_text_color_blue"
+                android:textSize="@dimen/register_textview_size" />
+
+            <EditText
+                android:id="@+id/userNameField"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/register_edit_bottom_margin"
+                android:layout_marginTop="@dimen/register_edit_top_margin"
+                android:background="#c6e9f9"
+                android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                android:maxLength="12"
+                android:padding="10dip"
+                android:textColor="@color/edit_text_color_blue" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/register_text_bottom_margin"
+                android:layout_marginTop="@dimen/register_text_top_margin"
+                android:text="@string/register_mobile_text"
+                android:textColor="@color/edit_text_color_blue"
+                android:textSize="@dimen/register_textview_size" />
+
+            <EditText
+                android:id="@+id/mobileField"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/register_edit_bottom_margin"
+                android:layout_marginTop="@dimen/register_edit_top_margin"
+                android:background="#c6e9f9"
+                android:inputType="number"
+                android:maxLength="10"
+                android:padding="10dip"
+                android:textColor="@color/edit_text_color_blue" />
+
+            <Button
+                android:id="@+id/registerBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/register_button_top_margin"
+                android:background="@drawable/button_border"
+                android:gravity="center"
+                android:shadowColor="@color/text_white"
+                android:shadowDx="-1"
+                android:shadowDy="1"
+                android:shadowRadius="0.04"
+                android:text="@string/register_signin_button"
+                android:textColor="@color/text_blue"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

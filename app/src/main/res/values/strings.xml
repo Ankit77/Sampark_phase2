@@ -1,0 +1,56 @@
+<resources>
+
+    <string name="app_name">e-Sampark</string>
+    <string name="welcome_text">Welcome to e-Sampark</string>
+    <string name="register_username_text">Username</string>
+    <string name="register_mobile_text">Mobile</string>
+    <string name="register_signin_button">REGISTER</string>
+
+    <string name="verify_registration_text">Please enter valid OTP to verify registration</string>
+    <string name="checkstatus_text">Press CHECK IN / CHECK OUT</string>
+    <string name="button_text">CHECK IN / CHECK OUT DISABLED</string>
+    <string name="verify_button">VERIFY</string>
+    <string name="resend_button">Request OTP</string>
+    <string name="verify_success_text">Registration Successful !</string>
+    <string name="verify_failed_text">Registration Failed !</string>
+
+
+    <string name="check_in_text">CHECK IN</string>
+    <string name="check_out_text">CHECK OUT</string>
+
+    <string name="distributer_list_header">Distributor List</string>
+    <string name="distributer_search_title">Search Customers</string>
+    <string name="distributer_refresh_title">Refresh Customers</string>
+    <string name="distributer_listview_title">Customer List</string>
+
+
+    <string name="symphony_preference">e-Sampark Settings</string>
+    <string name="preference_mobile_title">Mobile Number</string>
+    <string name="preference_mobile_summary">Set Central Mobile Number</string>
+    <string name="preference_app_title">e-Sampark GPS Tracking App</string>
+    <string name="preference_app_version">Version 1.0</string>
+
+    <string name="search_hint">Search Distributer</string>
+
+    <string name="get_geocode_text">GET GEOLOCATION</string>
+    <string name="gps_dialog_text">Do you want to enable GPS ?</string>
+
+    <string name="symphony_settings_title">Settings</string>
+
+    <string name="central_mobile_text">Central Mobile Number</string>
+    <string name="save_settings_button">SAVE</string>
+    <string name="symphony_exit_title">EXIT</string>
+
+
+    <!--Pref-->
+    <string name="STARTBUTTONTAG">STARTBUTTONTAG</string>
+    <string name="PUASEBUTTONTAG">PUASEBUTTONTAG</string>
+    <string name="GIVENTIME">GIVENTIME</string>
+    <string name="ISSERVICESTART">ISSERVICESTART</string>
+    <string name="TIME">TIME</string>
+    <string name="CURRENT_STATE">CURRENT_STATE</string>
+    <string name="TIMER_HOUR">TIMER_HOUR</string>
+    <string name="TIMER_MIN">TIMER_MIN</string>
+    <string name="TIMER_SEC">TIMER_SEC</string>
+
+</resources>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+	android:layout_height="fill_parent"
+ 	android:background="@android:color/transparent"
+ 	android:orientation="horizontal"
+ 	
+    >
+    
+    <View 
+	        
+	        android:layout_width="5dip"
+	    	android:layout_height="fill_parent"
+	    	android:id="@+id/checkStatusBar"
+	    	android:background="@drawable/highlight_list_item"
+	    	
+	        
+	     />
+	<RelativeLayout 
+	   android:layout_width="match_parent"
+	   android:layout_height="fill_parent"
+	   android:orientation="vertical"
+	   android:padding="10dip"
+	   android:background="@drawable/list_item_border"
+	   
+	    
+	    >
+	
+	    
+	    
+	    <TextView 
+	        
+	        android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:id="@+id/distName"
+	        android:text="ABC Corp"
+	        android:textColor="@color/text_white"
+	        android:textSize="18sp"
+	        android:textStyle="bold"
+	        android:ellipsize="none"
+	        android:scrollHorizontally="false"
+	        
+	        
+	      />
+	    
+	    <TextView 
+	        
+	        android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:id="@+id/distContactName"
+	    	android:layout_below="@+id/distName"
+	    	android:text="Roger X"
+	    	android:textColor="@color/text_white"
+	    	android:textSize="20sp"
+	    	android:visibility="gone"
+	        
+	      />
+	    
+	    
+	    <TextView 
+	        
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:id="@+id/distArea"
+	    	android:layout_below="@+id/distContactName"
+	    	android:text="44 club street"
+	    	android:textColor="@color/text_white"
+	    	android:textSize="16sp"
+		 	android:ellipsize="none"
+            android:singleLine="false"
+            android:scrollHorizontally="false"
+            android:layout_weight="1"
+            android:maxLines="100"
+				     
+	      />
+	    
+	    
+	    
+	
+	</RelativeLayout>
+</LinearLayout>

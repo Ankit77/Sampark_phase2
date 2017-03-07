@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:padding="@dimen/home_screen_pad"
+    android:background="@drawable/backgroundapp" 
+    android:layout_gravity="center_vertical"
+    android:gravity="center_vertical"
+    
+    
+    >
+    
+	<ImageView
+            android:id="@+id/imgPreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+      />
+    
+    <RelativeLayout 
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:orientation="vertical" 
+    	android:padding="@dimen/home_screen_pad"	
+         
+        android:gravity="center_vertical"
+        
+     
+    
+    >
+
+        
+       <View 
+    
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="@color/text_white"
+        android:id="@+id/hyphenUpper"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        
+    />
+       
+     
+   
+    <LinearLayout 
+        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+    	android:gravity="center"
+    	android:id="@+id/textContainer"
+    	android:layout_marginTop="20dip"
+    	
+    
+        >
+        
+        
+         <TextView
+        
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/distInfoName"
+        android:textColor="@color/text_white"
+        android:textSize="@dimen/distributer_name_font_size"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/distributer_name_top_margin"
+    	android:layout_marginBottom="@dimen/distributer_name_bottom_margin"
+    	android:text="XYZ COMPANY"
+    	android:gravity="center"
+    	
+
+    	
+      />
+    
+    
+    <TextView
+        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/distInfoContactName"
+        android:textColor="@color/text_white"        
+        android:textSize="@dimen/distributer_contact_name_font_size"
+        android:layout_marginTop="@dimen/distributer_contact_name_top_margin"
+    	android:layout_marginBottom="@dimen/distributer_contact_name_bottom_margin"
+        android:visibility="gone"
+     />
+    
+    <TextView
+        
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/distInfoAddr"
+        android:textColor="@color/text_white"
+        android:textSize="@dimen/distributer_addr_font_size"
+        android:layout_marginTop="@dimen/distributer_addr_top_margin"
+    	android:layout_marginBottom="@dimen/distributer_addr_bottom_margin"
+    	android:text="XYZ COMPANY"
+    	android:gravity="center"
+    	
+    	
+     />
+    </LinearLayout>
+    
+    
+    
+     <View 
+    
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="@color/text_white"
+        android:layout_margin="20dip"
+        android:id="@+id/hyphenLower"
+        android:layout_below="@+id/textContainer"
+        
+    />
+    
+    <LinearLayout 
+        
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkStatusLayout"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical"
+        android:layout_below="@+id/hyphenLower"
+        android:layout_marginTop="10dip"
+        
+        >
+      
+        <Button 
+            
+            android:layout_width="300dip"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/selector_image_button"
+	        
+	        android:text="@string/get_geocode_text"
+	        android:textColor="@color/text_white"
+	        android:id="@+id/getGeocodeBtn"
+	        android:shadowColor="@color/text_black"
+			android:shadowDy="1" 
+			android:shadowRadius="0.04"
+			android:checked="true"
+			android:textStyle="bold"
+			android:textSize="18dip"
+	        
+            
+            
+            />
+        
+         <Button 
+            
+            android:layout_width="300dip"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/selector_image_button"
+	        
+	        android:text="PRIVEW"
+	        android:textColor="@color/text_white"
+	        android:id="@+id/previewImage"
+	        android:shadowColor="@color/text_black"
+			android:shadowDy="1" 
+			android:shadowRadius="0.04"
+			android:checked="true"
+			android:textStyle="bold"
+			android:textSize="18dip"
+	        android:visibility="gone"
+            
+            
+            />
+         
+         <Button 
+            
+            android:layout_width="300dip"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/selector_image_button"
+	        
+	        android:text="DETELE"
+	        android:textColor="@color/text_white"
+	        android:id="@+id/deleteImage"
+	        android:shadowColor="@color/text_black"
+			android:shadowDy="1" 
+			android:shadowRadius="0.04"
+			android:checked="true"
+			android:textStyle="bold"
+			android:textSize="18dip"
+			android:visibility="gone"
+	        
+            
+            
+            />
+         
+        <!-- 
+	    <ToggleButton 
+	        
+	        android:layout_width="300dip"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/button_green"
+	        android:textOn="@string/check_in_text"
+	        android:textOff="@string/check_out_text"
+	        android:textColor="@color/text_white"
+	        android:id="@+id/checkStatus"
+	        android:shadowColor="@color/text_black"
+			android:shadowDy="1" 
+			android:shadowRadius="0.04"
+			android:checked="true"
+			android:textStyle="bold"
+			android:textSize="18dip"
+	        
+	        
+	        
+	       />
+ -->
+	    </LinearLayout>	    
+   
+    </RelativeLayout>
+
+</LinearLayout>

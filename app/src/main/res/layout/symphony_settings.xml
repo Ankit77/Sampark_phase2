@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:padding="@dimen/home_screen_pad"
+    android:background="@drawable/backgroundapp" 
+    android:layout_gravity="center"
+    
+    
+    >
+
+    
+    <LinearLayout 
+    
+    android:layout_width="300dip"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    >
+    	<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/central_mobile_text"
+		    android:layout_marginTop="@dimen/register_text_top_margin"
+		    android:layout_marginBottom="@dimen/register_text_bottom_margin"
+		    android:textSize="@dimen/register_textview_size"
+		    android:textColor="@color/edit_text_color_blue"
+		    
+		    
+		    />
+    
+        	<EditText
+		    
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:id="@+id/centralMobileNumberField"
+		    android:layout_marginTop="@dimen/register_edit_top_margin"
+		    android:layout_marginBottom="@dimen/register_edit_bottom_margin"
+		    android:background="#c6e9f9"
+		    android:padding="10dip"
+		    android:textColor="@color/edit_text_color_blue"
+		    android:maxLength="10"
+		    android:inputType="number"
+		    android:enabled="false"
+		    
+		  
+		 
+		    
+		   
+		   
+		    />
+        	
+        	<Button
+		    
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:id="@+id/saveSettingsBtn"
+		    android:background="@drawable/button_border"
+		    android:text="@string/save_settings_button"
+		    android:layout_marginTop="@dimen/register_button_top_margin"
+		    android:textColor="@color/text_blue"
+		    android:textStyle="bold"
+		    android:shadowColor="@color/text_white" 
+		   	android:shadowDx="-1"
+			android:shadowDy="1" 
+			android:shadowRadius="0.04"
+			android:gravity="center"
+			android:layout_gravity="center"
+			android:visibility="gone"
+			
+		    />
+		
+        
+    </LinearLayout>
+    
+</LinearLayout>

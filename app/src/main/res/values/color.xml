@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+     <color name="text_white">#FFFFFF</color>
+     <color name="text_black">#000000</color>
+     <color name="text_green">#84c117</color>
+     <color name="text_blue">#0d4964</color>
+     
+     
+     <color name="button_red">#D90024</color>
+     <color name="button_green">#84c117</color>
+     <color name="button_blue">#00B0F0</color>
+     <color name="button_white">#f1f1f1</color>
+     <color name="button_border_green">#c1e77e</color>
+     
+     
+     <color name="edit_blue">#c6e9f9</color>
+     <color name="edit_text_color_blue">#133f52</color>     
+     <color name="edit_text_blue">#c6e9f9</color>
+     
+     <color name="bg_blue">#4189a9</color>
+     <color name="actionbar_bg">#123e53</color>
+     
+     
+     
+</resources>

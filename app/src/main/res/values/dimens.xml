@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="home_screen_pad">10dip</dimen>
+    <dimen name="register_text_top_margin">5dip</dimen>
+    <dimen name="register_text_bottom_margin">3dip</dimen>
+    
+    <dimen name="register_edit_top_margin">3dip</dimen>
+    <dimen name="register_edit_bottom_margin">5dip</dimen>
+    <dimen name="register_button_top_margin">15dip</dimen>
+    <dimen  name="verify_status">19sp</dimen>
+    <dimen name="register_textview_size">20dip</dimen>
+    
+    <dimen name="verify_textview_size">17dip</dimen>
+    
+    
+    <dimen name="distributer_name_top_margin">10dip</dimen>
+    <dimen name="distributer_name_bottom_margin">10dip</dimen>
+    <dimen name="distributer_name_font_size">25dip</dimen>
+    
+    <dimen name="distributer_contact_name_top_margin">20dip</dimen>
+    <dimen name="distributer_contact_name_bottom_margin">10dip</dimen>
+    <dimen name="distributer_contact_name_font_size">20dip</dimen>
+    
+    
+    <dimen name="distributer_addr_top_margin">8dip</dimen>
+    <dimen name="distributer_addr_bottom_margin">10dip</dimen>
+    <dimen name="distributer_addr_font_size">20dip</dimen>
+    <dimen name="distributer_list_header">23dip</dimen>
+    
+    
+</resources>
