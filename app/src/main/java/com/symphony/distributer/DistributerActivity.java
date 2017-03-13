@@ -4,6 +4,7 @@ package com.symphony.distributer;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
@@ -34,10 +36,15 @@ import com.google.android.gms.location.LocationServices;
 import com.symphony.E_Sampark;
 import com.symphony.R;
 import com.symphony.database.DB;
+import com.symphony.http.WSLogout;
 import com.symphony.report.SymphonyReport;
 import com.symphony.sms.SMSService;
 import com.symphony.sms.SyncAlaram;
 import com.symphony.sms.SyncManager;
+import com.symphony.utils.Const;
+import com.symphony.utils.SymphonyUtils;
+
+import org.apache.commons.net.io.Util;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -70,6 +77,11 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     private E_Sampark e_sampark;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    private AsyncLogout asyncLogout;
+    private static final String HTTP_SERVER = "61.12.85.74";
+    private static final String HTTP_PORT = "800";
+    private static final String HTTP_PROTOCOL = "http://";
+    private String HTTP_ENDPOINT = HTTP_PROTOCOL + HTTP_SERVER + ":" + HTTP_PORT;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,6 +128,18 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.symphony_exit:
+                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
+                    SymphonyUtils.displayDialog(DistributerActivity.this, getString(R.string.app_name), getString(R.string.alert_logout));
+                } else {
+                    if (SymphonyUtils.isNetworkAvailable(DistributerActivity.this)) {
+                        String url = HTTP_ENDPOINT+"/eSampark_Logout.asp?user=android&pass=xand123&MNO=" + e_sampark.getSharedPreferences().getString("usermobilenumber", "") + "&empid=" + e_sampark.getSharedPreferences().getString(Const.EMPID, "");
+                        asyncLogout = new AsyncLogout();
+                        asyncLogout.execute(url);
+                    } else {
+                        SymphonyUtils.displayDialog(DistributerActivity.this, getString(R.string.app_name), "Please Check Internet Connection");
+                    }
+
+                }
                 System.exit(1);
                 return true;
             case R.id.distributer_listview:
@@ -129,18 +153,6 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         }
     }
 
-//    public class LocationReceiver extends BroadcastReceiver {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            if (intent != null) {
-//                Bundle bundle = intent.getExtras();
-//                if (bundle != null) {
-//                    currentLocation = bundle.getString("current_location");
-//                }
-//            }
-//        }
-//
-//    }
 
     @Override
     public void onDistributerListSelect() {
@@ -162,11 +174,11 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GPS_RESULT) {
-            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 mCheckStatusListener.onGPSOK();
 
                 Log.e("gps", resultCode + " " + requestCode + " " +
-                                mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                        mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
                 );
 
             }
@@ -443,5 +455,33 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+    /**
+     * Asynctask for logout
+     */
+    private class AsyncLogout extends AsyncTask<String, Void, Boolean> {
+
+        private WSLogout wsLogout;
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = SymphonyUtils.displayProgressDialog(DistributerActivity.this);
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            wsLogout = new WSLogout();
+            return wsLogout.executeTown(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            SymphonyUtils.dismissProgressDialog(progressDialog);
+            SymphonyUtils.displayDialog(DistributerActivity.this, getString(R.string.app_name), wsLogout.getMessage());
+        }
     }
 }

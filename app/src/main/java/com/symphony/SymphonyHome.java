@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.symphony.distributer.DistributerActivity;
 import com.symphony.register.RegisterFragment;
 import com.symphony.sms.SMSService;
+import com.symphony.utils.WriteLog;
 
 
 public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -63,7 +64,7 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
 
         prefs = e_sampark.getSharedPreferences();
 
-        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             googleApiClient = new GoogleApiClient
                     .Builder(this)
                     .enableAutoManage(this, 34992, this)
@@ -85,9 +86,10 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         Intent intentLocationService = new Intent(this, SMSService.class);
         intentLocationService.setAction(SMSService.FETCH_LOCATION_INTENT);
         startService(intentLocationService);
-
+        final String regId = SymphonyGCMHome.getRegistrationId(SymphonyHome.this);
+        WriteLog.E("REGID", regId);
         boolean isRegister = prefs.getBoolean("isregister", false);
-        if (!isRegister) {
+        if (isRegister) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.homeFragment, new RegisterFragment()).commitAllowingStateLoss();
         } else {
@@ -114,7 +116,6 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        String regId = SymphonyGCMHome.getGCMRegistrationId(this);
     }
 
     @Override

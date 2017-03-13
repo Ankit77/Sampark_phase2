@@ -6,6 +6,7 @@ public class OTPData {
 	private boolean status;
 	private String otp;
 	private String message;
+	private String empid;
 	
 	public OTPData(){}
 	
@@ -34,6 +35,14 @@ public class OTPData {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public String getEmpid() {
+		return empid;
+	}
+
+	public void setEmpid(String empid) {
+		this.empid = empid;
 	}
 }
 

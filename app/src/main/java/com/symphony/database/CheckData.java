@@ -6,7 +6,8 @@ public class CheckData {
 	private String checkId;
 	private String checkDistName;
 	private boolean checkFlag;
-	
+
+
 	private boolean checkStatus;
 	private String checkLat;
 	private String checkLng;

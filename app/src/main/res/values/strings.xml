@@ -52,5 +52,6 @@
     <string name="TIMER_HOUR">TIMER_HOUR</string>
     <string name="TIMER_MIN">TIMER_MIN</string>
     <string name="TIMER_SEC">TIMER_SEC</string>
+    <string name="alert_logout">Please Checkout First</string>
 
 </resources>

@@ -43,10 +43,8 @@ public class RegisterFragment extends Fragment {
 
 
     private Button registerBtn;
-    private Button settingsBtn;
     private EditText userNameText;
     private EditText mobileNumberText;
-    private SharedPreferences.Editor editor;
     private ProgressDialog mProgressBar;
     private String MX_HTTP_SERVER = "180.150.249.57";
     private String MX_HTTP_PORT = "900";
@@ -70,23 +68,6 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
-        
-       /* settingsBtn = (Button) getActivity().findViewById(R.id.settingsBtn);
-        settingsBtn.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent(getActivity(),SymphonySettings.class);
-				startActivity(intent);
-				
-			}
-        	
-        	
-        	
-        	 
-        });*/
 
 
         if (mProgressBar != null) {
@@ -167,27 +148,18 @@ public class RegisterFragment extends Fragment {
                     if (userName.contains("MX")) {
 
                         Log.e("Username check ", "Contains MX " + userName);
-
-
                         SymphonyUtils.setMasterIp(getActivity(), MX_HTTP_SERVER, MX_HTTP_PORT);
 
                     } else if (userName.contains("INT")) {
                         Log.e("Username check ", "Contains INT " + userName);
                         SymphonyUtils.setMasterIp(getActivity(), INT_HTTP_SERVER, INT_HTTP_PORT);
-
-
                     } else {
-
                         //	SymphonyUtils.setMasterIp(getActivity(),HTTP_SERVER, HTTP_PORT);
                         SymphonyUtils.setMasterIp(getActivity(), null, null);
-
                         Log.e("Username check ", "Does not Contain " + userName);
                     }
-
-
                     mProgressBar.show();
                     HttpManager httpManager = new HttpManager(getActivity());
-
 
                     httpManager.checkMobileNumber(mobileNumberText.getText().toString(), new HttpStatusListener() {
 
@@ -210,21 +182,9 @@ public class RegisterFragment extends Fragment {
 
                             if (status) {
 
-								
-								/*Intent intentRegisterSMSService = new Intent(getActivity(),SMSService.class);
-
-								intentRegisterSMSService.putExtra("username",userNameText.getText().toString());
-								intentRegisterSMSService.putExtra("usernumber",mobileNumberText.getText().toString());
-								
-								intentRegisterSMSService.setAction(SMSService.SEND_REGISTER_USER_INTENT);
-								
-								getActivity().startService(intentRegisterSMSService); */
-
                                 final String regId = SymphonyGCMHome.getRegistrationId(getActivity());
-                                //	Toast.makeText(getActivity(), "Registration ID\n"+regId , Toast.LENGTH_LONG).show();
                                 HttpManager httpManger = new HttpManager(getActivity());
                                 httpManger.registerDeviceId(
-
                                         userNameText.getText().toString(),
                                         mobileNumberText.getText().toString(),
                                         mobileNumberText.getText().toString() + "@gmail.com",
@@ -234,18 +194,12 @@ public class RegisterFragment extends Fragment {
                                             @Override
                                             public void onOtpReceived(OTPData otpData) {
                                                 // TODO Auto-generated method stub
-
-
                                                 if (otpData == null) {
-
                                                     mProgressBar.dismiss();
-
                                                     Toast.makeText(getActivity(), e_sampark.getSharedPreferences().getString(Const.MESSAGE, ""), Toast.LENGTH_LONG).show();
                                                     return;
                                                 }
                                                 Log.e("RegisterFragment ", "OTP RECEIVED " +
-
-
                                                         otpData.getOtp() + " " +
                                                         otpData.isStatus());
                                                 mProgressBar.dismiss();
@@ -253,7 +207,7 @@ public class RegisterFragment extends Fragment {
                                                 if (otpData.isStatus()) {
                                                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy-hh:mm:ss a");
                                                     String currentDateandTime = sdf.format(new Date()).replace(" ", "");
-                                                    currentDateandTime=currentDateandTime.replace(".","");
+                                                    currentDateandTime = currentDateandTime.replace(".", "");
 
                                                     Bundle bundle = new Bundle();
                                                     bundle.putString("usernumber", mobileNumberText.getText().toString());
@@ -333,7 +287,7 @@ public class RegisterFragment extends Fragment {
 
 
                 }
-				
+
 			
 				
               /* FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
@@ -341,7 +295,7 @@ public class RegisterFragment extends Fragment {
                 ft.replace(R.id.homeFragment, new VerifyFragment()).addToBackStack("verify").commit();
 				
 				*/
-				
+
 				/*Intent intent = new Intent(getActivity(),DistributerActivity.class);
 				getActivity().startActivity(intent); 	
 				

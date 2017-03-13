@@ -120,30 +120,16 @@ public class NotificationReport  extends Fragment  implements LoaderManager.Load
 				String[] from, int[] to, int flags) {
 			super(context, layout, c, from, to, flags);
 			// TODO Auto-generated constructor stub
-	
-		
 			this.context = context;
 			this.cursor = c;
 			this.layout = layout;
 			layoutInflater = LayoutInflater.from(context);
-			
-			
-			
-		
 		}
 		
 		public View newView(Context context , Cursor cursor, ViewGroup parent){
-			
-			
 			return layoutInflater.inflate(R.layout.notification_report_list_row,null);
-			
-			
-			
-			
 		}
-		
-		
-		
+
 		@SuppressLint("NewApi")
 		@Override
 		public void bindView(View view , Context context , Cursor cursor ){

@@ -4,9 +4,15 @@ package com.symphony.utils;
  * Created by indianic on 19/12/15.
  */
 public class Const {
+    public static final String HTTP_SERVER = "61.12.85.74";
+    public static final String HTTP_PORT = "800";
+    public static final String HTTP_PROTOCOL = "http://";
+    public static final String HTTP_ENDPOINT = HTTP_PROTOCOL + HTTP_SERVER + ":" + HTTP_PORT;
+
     public static final String EMPID = "EMPID";
     public static final String USERTYPE = "USERTYPE";
     public static final String MESSAGE = "MESSAGE";
+    public static final String PREF_MOBILE = "MOBILE";
 
     public static final String CHECKIN = "CHECKIN";
     public static final String CHECKOUT = "CHECKOUT";
