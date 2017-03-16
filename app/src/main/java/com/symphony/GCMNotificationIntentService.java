@@ -15,58 +15,57 @@ import com.symphony.utils.SymphonyUtils;
 
 public class GCMNotificationIntentService extends IntentService {
 
-	public static final int NOTIFICATION_ID = 1;
-	private NotificationManager mNotificationManager;
-	NotificationCompat.Builder builder;
+    public static final int NOTIFICATION_ID = 1;
+    private NotificationManager mNotificationManager;
+    NotificationCompat.Builder builder;
+    private E_Sampark e_sampark;
 
-	public GCMNotificationIntentService() {
-		super("GcmIntentService");
-	}
+    public GCMNotificationIntentService() {
+        super("GcmIntentService");
+    }
 
-	public static final String TAG = "GCMNotificationIntentService";
+    public static final String TAG = "GCMNotificationIntentService";
 
-	@Override
-	protected void onHandleIntent(Intent intent) {
-		Bundle extras = intent.getExtras();
-		GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        e_sampark = (E_Sampark) getApplicationContext();
+        Bundle extras = intent.getExtras();
+        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+        String messageType = gcm.getMessageType(intent);
 
-		String messageType = gcm.getMessageType(intent);
+        if (!extras.isEmpty()) {
+            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
+                    .equals(messageType)) {
+                sendNotification("Send error: " + extras.toString());
+            } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
+                    .equals(messageType)) {
+                sendNotification("Deleted messages on server: "
+                        + extras.toString());
+            } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
+                    .equals(messageType)) {
 
-		if (!extras.isEmpty()) {
-			if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
-					.equals(messageType)) {
-				sendNotification("Send error: " + extras.toString());
-			} else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
-					.equals(messageType)) {
-				sendNotification("Deleted messages on server: "
-						+ extras.toString());
-			} else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
-					.equals(messageType)) {
+                for (int i = 0; i < 3; i++) {
 
-				for (int i = 0; i < 3; i++) {
-					Log.i(TAG,
-							"Working... " + (i + 1) + "/5 @ "
-									+ SystemClock.elapsedRealtime());
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-					}
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                    }
 
-				}
-				Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
+                }
 
-				sendNotification("Message Received from Google GCM Server: "
-						+ extras.get(SymphonyUtils.MESSAGE_KEY));
-				Log.i(TAG, "Received: " + extras.toString());
-			}
-		}
-		GcmBroadcastReceiver.completeWakefulIntent(intent);
-	}
+                sendNotification("Message Received from Google GCM Server: "
+                        + extras.get(SymphonyUtils.MESSAGE_KEY));
+            }
+        }
+        if (e_sampark.getSharedPreferences().getBoolean("isregister", false)) {
+            GcmBroadcastReceiver.completeWakefulIntent(intent);
+        }
+    }
 
-	private void sendNotification(String msg) {
-		
+    private void sendNotification(String msg) {
+
 		/*Log.d(TAG, "Preparing to send notification...: " + msg);
-		mNotificationManager = (NotificationManager) this
+        mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
@@ -81,5 +80,5 @@ public class GCMNotificationIntentService extends IntentService {
 		mBuilder.setContentIntent(contentIntent);
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 		Log.d(TAG, "Notification sent successfully.");*/
-	}
+    }
 }

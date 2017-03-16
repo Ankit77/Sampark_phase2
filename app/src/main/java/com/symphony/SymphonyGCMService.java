@@ -73,26 +73,26 @@ public class SymphonyGCMService extends Service {
         Log.e("GCM", "onStartCommand");
         E_Sampark e_sampark = (E_Sampark) getApplicationContext();
         prefs = e_sampark.getSharedPreferences();
+        if (e_sampark.getSharedPreferences().getBoolean("isregister", false)) {
+            if (intent != null) {
+                Bundle extras = intent.getExtras();
+                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
-        if (intent != null) {
-            Bundle extras = intent.getExtras();
-            GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+                String messageType = gcm.getMessageType(intent);
 
-            String messageType = gcm.getMessageType(intent);
-
-            if (extras != null) {
-                if (!extras.isEmpty()) {
+                if (extras != null) {
+                    if (!extras.isEmpty()) {
 
 
-                    if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
-                            .equals(messageType)) {
-                        sendNotification("Send error: " + extras.toString());
-                    } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
-                            .equals(messageType)) {
-                        sendNotification("Deleted messages on server: "
-                                + extras.toString());
-                    } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
-                            .equals(messageType)) {
+                        if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
+                                .equals(messageType)) {
+                            sendNotification("Send error: " + extras.toString());
+                        } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
+                                .equals(messageType)) {
+                            sendNotification("Deleted messages on server: "
+                                    + extras.toString());
+                        } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
+                                .equals(messageType)) {
 
 				/*for (int i = 0; i < 3; i++) {
                     Log.i(TAG,
@@ -104,16 +104,17 @@ public class SymphonyGCMService extends Service {
 					}
 
 				}*/
-                        Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
+                            Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
 
 
-                        sendNotification(
-                                extras.get(SymphonyUtils.MESSAGE_KEY) + "");
-                        Log.i(TAG, "Received: " + extras.toString());
+                            sendNotification(
+                                    extras.get(SymphonyUtils.MESSAGE_KEY) + "");
+                            Log.i(TAG, "Received: " + extras.toString());
+                        }
                     }
                 }
+                GcmBroadcastReceiver.completeWakefulIntent(intent);
             }
-            GcmBroadcastReceiver.completeWakefulIntent(intent);
         }
         return Service.START_STICKY;
     }
