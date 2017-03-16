@@ -35,6 +35,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.symphony.E_Sampark;
 import com.symphony.R;
+import com.symphony.SymphonyHome;
 import com.symphony.database.DB;
 import com.symphony.http.WSLogout;
 import com.symphony.report.SymphonyReport;
@@ -128,11 +129,11 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.symphony_exit:
-                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
+                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKOUT)) {
                     SymphonyUtils.displayDialog(DistributerActivity.this, getString(R.string.app_name), getString(R.string.alert_logout));
                 } else {
                     if (SymphonyUtils.isNetworkAvailable(DistributerActivity.this)) {
-                        String url = HTTP_ENDPOINT+"/eSampark_Logout.asp?user=android&pass=xand123&MNO=" + e_sampark.getSharedPreferences().getString("usermobilenumber", "") + "&empid=" + e_sampark.getSharedPreferences().getString(Const.EMPID, "");
+                        String url = HTTP_ENDPOINT + "/eSampark_Logout.asp?user=android&pass=xand123&MNO=" + e_sampark.getSharedPreferences().getString("usermobilenumber", "") + "&empid=" + e_sampark.getSharedPreferences().getString(Const.EMPID, "");
                         asyncLogout = new AsyncLogout();
                         asyncLogout.execute(url);
                     } else {
@@ -140,7 +141,7 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
                     }
 
                 }
-                System.exit(1);
+//                System.exit(1);
                 return true;
             case R.id.distributer_listview:
                 onDistributerListSelect();
@@ -153,6 +154,14 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         }
     }
 
+    private void signOut() {
+        e_sampark.getSharedPreferences().edit().clear().commit();
+        Intent intent = new Intent(this, SymphonyHome.class);
+        intent.putExtra("finish", true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
+        startActivity(intent);
+        finish();
+    }
 
     @Override
     public void onDistributerListSelect() {
@@ -481,7 +490,11 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
             SymphonyUtils.dismissProgressDialog(progressDialog);
-            SymphonyUtils.displayDialog(DistributerActivity.this, getString(R.string.app_name), wsLogout.getMessage());
+            if (aBoolean) {
+                signOut();
+            } else {
+                SymphonyUtils.displayDialog(DistributerActivity.this, getString(R.string.app_name), wsLogout.getMessage());
+            }
         }
     }
 }

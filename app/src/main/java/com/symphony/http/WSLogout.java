@@ -62,7 +62,11 @@ public class WSLogout {
                         break;
                     case XmlPullParser.END_TAG:
                         if (tagname.equalsIgnoreCase("status")) {
-                            isLogout = Boolean.parseBoolean(text);
+                            if (text.equalsIgnoreCase("success")) {
+                                isLogout = true;
+                            } else {
+                                isLogout = false;
+                            }
                         } else if (tagname.equalsIgnoreCase("message")) {
                             message = text;
                         }

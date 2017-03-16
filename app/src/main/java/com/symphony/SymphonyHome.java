@@ -86,10 +86,10 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         Intent intentLocationService = new Intent(this, SMSService.class);
         intentLocationService.setAction(SMSService.FETCH_LOCATION_INTENT);
         startService(intentLocationService);
-        final String regId = SymphonyGCMHome.getRegistrationId(SymphonyHome.this);
-        WriteLog.E("REGID", regId);
+//        final String regId = SymphonyGCMHome.getRegistrationId(SymphonyHome.this);
+//        WriteLog.E("REGID", regId);
         boolean isRegister = prefs.getBoolean("isregister", false);
-        if (isRegister) {
+        if (!isRegister) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.homeFragment, new RegisterFragment()).commitAllowingStateLoss();
         } else {
