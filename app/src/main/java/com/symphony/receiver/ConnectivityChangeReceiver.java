@@ -8,18 +8,28 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import com.symphony.E_Sampark;
+import com.symphony.service.TimeTickService;
 import com.symphony.sms.SyncManager;
+import com.symphony.utils.SymphonyUtils;
 
 
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
+    private E_Sampark e_sampark;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        e_sampark = (E_Sampark) context.getApplicationContext();
 
         NetworkInfo networkInfo = intent
                 .getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
         if (networkInfo != null) {
-
+            if (e_sampark.getSharedPreferences().getBoolean("isregister", false)) {
+                if (!SymphonyUtils.isMyServiceRunning(TimeTickService.class, context)) {
+                    Intent service_intent = new Intent(context, TimeTickService.class);
+                    context.startService(service_intent);
+                }
+            }
             if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI || networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
 
                 //get the different network states

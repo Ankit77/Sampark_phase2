@@ -53,5 +53,6 @@
     <string name="TIMER_MIN">TIMER_MIN</string>
     <string name="TIMER_SEC">TIMER_SEC</string>
     <string name="alert_logout">Please Checkout First</string>
+    <string name="alert_somethingwrong">Something went wrong..Please try again later</string>
 
 </resources>

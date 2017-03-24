@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.symphony"
     android:installLocation="internalOnly"
-    android:versionCode="10"
-    android:versionName="1.8">
+    android:versionCode="11"
+    android:versionName="1.9">
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -86,7 +86,6 @@
         </receiver>
 
         <service android:name=".receiver.MyService"></service>
-        <service android:name=".service.TimerService"></service>
 
         <receiver android:name=".sms.SyncAlaram"></receiver>
         <receiver android:name=".receiver.AlarmReceiver"></receiver>
@@ -109,9 +108,13 @@
         <service
             android:name="SymphonyGCMService"
             android:enabled="true"></service>
+        <service
+            android:name=".service.TimeTickService"
+            android:enabled="true"></service>
 
         <activity
             android:name=".report.SymphonyReport"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <!--<receiver android:name=".distributer.CheckStatus$LocationFailedReceiver"></receiver>-->

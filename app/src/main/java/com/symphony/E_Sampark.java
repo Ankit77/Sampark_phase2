@@ -22,8 +22,8 @@ import java.util.Calendar;
 public class E_Sampark extends Application {
 
     private SharedPreferences sharedPreferences;
-    private AlarmManager alarmManager;
-    private PendingIntent pendingIntent;
+//    private AlarmManager alarmManager;
+//    private PendingIntent pendingIntent;
 
     @Override
     public void onCreate() {
@@ -31,11 +31,11 @@ public class E_Sampark extends Application {
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         Intent intentLocationService = new Intent(getApplicationContext(), MyService.class);
         startService(intentLocationService);
-        if (!sharedPreferences.getBoolean(Const.PREF_ISSYNCDATA, false)) {
-            setSyncCheckStatusAlarm();
-            setWipeDataAlarm();
-            sharedPreferences.edit().putBoolean(Const.PREF_ISSYNCDATA, true).commit();
-        }
+//        if (!sharedPreferences.getBoolean(Const.PREF_ISSYNCDATA, false)) {
+//            setSyncCheckStatusAlarm();
+//            setWipeDataAlarm();
+//            sharedPreferences.edit().putBoolean(Const.PREF_ISSYNCDATA, true).commit();
+//        }
 
     }
 
@@ -73,31 +73,31 @@ public class E_Sampark extends Application {
 //        }
 //    };
 
-    private void setSyncCheckStatusAlarm() {
-        Calendar calendar = Calendar.getInstance();
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent alramReceiverIntent = new Intent(this, SyncAlaram.class);
-        alramReceiverIntent.setAction(SyncAlaram.DB_CHECK_FOR_DIST_PHOTO);
-        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(this, 0, alramReceiverIntent, 0);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),
-                Const.SYNCDATA_INTERVAL, alramPendingIntent);
-    }
-
-    private void setWipeDataAlarm() {
-        Calendar calendar = Calendar.getInstance();
-        //calendar.add(Calendar.HOUR_OF_DAY, 48);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent alramReceiverIntent = new Intent(this, SyncAlaram.class);
-        alramReceiverIntent.setAction(SyncAlaram.WIPE_REPORT_DATA);
-        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(this, 1, alramReceiverIntent, 0);
-//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+//    private void setSyncCheckStatusAlarm() {
+//        Calendar calendar = Calendar.getInstance();
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        Intent alramReceiverIntent = new Intent(this, SyncAlaram.class);
+//        alramReceiverIntent.setAction(SyncAlaram.DB_CHECK_FOR_DIST_PHOTO);
+//        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(this, 0, alramReceiverIntent, 0);
+//        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
 //                calendar.getTimeInMillis(),
-//                AlarmManager.INTERVAL_DAY * 2, alramPendingIntent);
-        getSharedPreferences().edit().putLong(Const.PREF_WIPEOUT_TIME, calendar.getTimeInMillis()).commit();
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),
-                Const.WIPEDATA_INTERVAL, alramPendingIntent);
-    }
+//                Const.SYNCDATA_INTERVAL, alramPendingIntent);
+//    }
+//
+//    private void setWipeDataAlarm() {
+//        Calendar calendar = Calendar.getInstance();
+//        //calendar.add(Calendar.HOUR_OF_DAY, 48);
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        Intent alramReceiverIntent = new Intent(this, SyncAlaram.class);
+//        alramReceiverIntent.setAction(SyncAlaram.WIPE_REPORT_DATA);
+//        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(this, 1, alramReceiverIntent, 0);
+////        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+////                calendar.getTimeInMillis(),
+////                AlarmManager.INTERVAL_DAY * 2, alramPendingIntent);
+//        getSharedPreferences().edit().putLong(Const.PREF_WIPEOUT_TIME, calendar.getTimeInMillis()).commit();
+//        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+//                calendar.getTimeInMillis(),
+//                Const.WIPEDATA_INTERVAL, alramPendingIntent);
+//    }
 
 }

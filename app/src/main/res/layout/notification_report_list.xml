@@ -2,38 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
-    
-     <ListView
-        
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/notificationReportList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/notificationReportList"
-        android:dividerHeight="8dip"
+        android:background="@android:color/transparent"
         android:divider="@android:color/transparent"
- 		android:background="@android:color/transparent"
-        
-        
-        />
- <TextView 
-       
-       
-    android:id="@+id/emptyViewNotification"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:textColor="@color/bg_blue"
-    android:textSize="22dip"
-    android:layout_gravity="center" 
-    android:gravity="center"
-    android:shadowColor="@color/text_white"
-	android:shadowDy="1" 
-	android:shadowRadius="0.04"
-	android:checked="true"
-	android:textStyle="bold"
-	android:text="NO RECORDS FOUND"
-	
-       
-    
-    />
+        android:dividerHeight="8dip" />
+
+    <TextView
+        android:id="@+id/emptyViewNotification"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:checked="true"
+        android:gravity="center"
+        android:shadowColor="@color/text_white"
+        android:shadowDy="1"
+        android:shadowRadius="0.04"
+        android:text="NO RECORDS FOUND"
+        android:textColor="@color/bg_blue"
+        android:textSize="22dip"
+        android:textStyle="bold" />
 </LinearLayout>

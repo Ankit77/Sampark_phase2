@@ -337,7 +337,7 @@ public class SMSService extends Service implements LocationListener {
                         this.checkData = checkData;
                         checkData.setCheckId(insert.getLastPathSegment());
                         checkData.setCheckFlag(false);
-                        if (!checkData.isCheckStatus()) {
+                        if (checkData.isCheckStatus()) {
                             updateCheckFlag(checkData);
                         } else {
                             int count = getBaseContext().getContentResolver()

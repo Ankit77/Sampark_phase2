@@ -2,6 +2,8 @@ package com.symphony;
 
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +11,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
@@ -18,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crittercism.app.Crittercism;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -31,13 +35,17 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.symphony.distributer.DistributerActivity;
 import com.symphony.register.RegisterFragment;
+import com.symphony.service.TimeTickService;
 import com.symphony.sms.SMSService;
+import com.symphony.sms.SyncAlaram;
+import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
 import com.symphony.utils.WriteLog;
 
 import org.apache.commons.net.io.Util;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 
 public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -63,6 +71,7 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
         setSupportActionBar(toolbar);
 
+        Crittercism.initialize(getApplicationContext(), "9a9c1f48ff544897b9dc51f0edab21de00555300");
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         this.getSupportActionBar().setDisplayShowCustomEnabled(true);
         //this.getSupportActionBar().setCustomView(R.layout.home_actionbar);
@@ -74,6 +83,31 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         prefs = e_sampark.getSharedPreferences();
         asyncRegisterGCM = new AsyncRegisterGCM();
         asyncRegisterGCM.execute();
+        if (e_sampark.getSharedPreferences().getBoolean("isregister", false)) {
+            //Check time diffrence for Wipe Data
+            long diff_wipedata = Calendar.getInstance().getTimeInMillis() - e_sampark.getSharedPreferences().getLong(Const.PREF_WIPEDATA, 0);
+            if (diff_wipedata >= Const.WIPEDATA_INTERVAL) {
+                Log.e(SymphonyHome.class.getSimpleName(), "WIPE IS CALL");
+                setWipeDataAlarm(SymphonyHome.this);
+                SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
+                editor.putLong(Const.PREF_WIPEDATA, Calendar.getInstance().getTimeInMillis());
+                editor.commit();
+            }
+
+            long diff_syncdata = Calendar.getInstance().getTimeInMillis() - e_sampark.getSharedPreferences().getLong(Const.PREF_SYNC, 0);
+            if (diff_syncdata >= Const.SYNCDATA_INTERVAL) {
+                Log.e(SymphonyHome.class.getSimpleName(), "SYNC IS CALL");
+                setSyncCheckStatusAlarm(SymphonyHome.this);
+                SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
+                editor.putLong(Const.PREF_SYNC, Calendar.getInstance().getTimeInMillis());
+                editor.commit();
+            }
+        }
+        //Start service for checking wipe data && Sync Pending Data
+        if (!SymphonyUtils.isMyServiceRunning(TimeTickService.class, SymphonyHome.this)) {
+            Intent intent = new Intent(SymphonyHome.this, TimeTickService.class);
+            startService(intent);
+        }
 
     }
 
@@ -216,7 +250,8 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
 
         @Override
         protected String doInBackground(Void... params) {
-            if (TextUtils.isEmpty(SymphonyGCMHome.getRegistrationId(SymphonyHome.this))) {
+            regId = SymphonyGCMHome.getRegistrationId(SymphonyHome.this);
+            if (TextUtils.isEmpty(regId)) {
                 gcm = GoogleCloudMessaging.getInstance(SymphonyHome.this);
                 try {
                     regId = gcm.register(SymphonyUtils.GCM_KEY);
@@ -234,18 +269,55 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             SymphonyUtils.dismissProgressDialog(progressDialog);
-            if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                googleApiClient = new GoogleApiClient
-                        .Builder(SymphonyHome.this)
-                        .enableAutoManage(SymphonyHome.this, 34992, SymphonyHome.this)
-                        .addApi(LocationServices.API)
-                        .addConnectionCallbacks(SymphonyHome.this)
-                        .addOnConnectionFailedListener(SymphonyHome.this)
-                        .build();
-                locationChecker(googleApiClient, SymphonyHome.this);
+            if (!TextUtils.isEmpty(s)) {
+                if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    googleApiClient = new GoogleApiClient
+                            .Builder(SymphonyHome.this)
+                            .enableAutoManage(SymphonyHome.this, 34992, SymphonyHome.this)
+                            .addApi(LocationServices.API)
+                            .addConnectionCallbacks(SymphonyHome.this)
+                            .addOnConnectionFailedListener(SymphonyHome.this)
+                            .build();
+                    locationChecker(googleApiClient, SymphonyHome.this);
+                } else {
+                    loadData();
+                }
             } else {
-                loadData();
+                SymphonyUtils.displayDialog(SymphonyHome.this, getString(R.string.app_name), getString(R.string.alert_somethingwrong));
             }
         }
+
+
     }
+
+    private void setSyncCheckStatusAlarm(Context context) {
+        Calendar calendar = Calendar.getInstance();
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent alramReceiverIntent = new Intent(context, SyncAlaram.class);
+        alramReceiverIntent.setAction(SyncAlaram.DB_CHECK_FOR_DIST_PHOTO);
+        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(context, 0, alramReceiverIntent, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    calendar.getTimeInMillis(), alramPendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    calendar.getTimeInMillis(), alramPendingIntent);
+        }
+    }
+
+    private void setWipeDataAlarm(Context context) {
+        Calendar calendar = Calendar.getInstance();
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent alramReceiverIntent = new Intent(context, SyncAlaram.class);
+        alramReceiverIntent.setAction(SyncAlaram.WIPE_REPORT_DATA);
+        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(context, 1, alramReceiverIntent, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(), alramPendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(), alramPendingIntent);
+        }
+    }
+
 }

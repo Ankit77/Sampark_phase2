@@ -101,7 +101,7 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         bundle.putString("checkin_location", currentLocation);
         mCheckStatusListener = (CheckStatusListener) getSupportFragmentManager().findFragmentById(R.id.checkStatusFragment);
 //        mLocationReceiver = new LocationReceiver();
-        startSyncAlram();
+//        startSyncAlram();
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -394,25 +394,25 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     }
 
 
-    public void startSyncAlram() {
-        alramManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        Intent alramReceiverIntent = new Intent(this, SyncAlaram.class);
-        alramReceiverIntent.setAction(SyncAlaram.DB_CHECK_FOR_DIST_PHOTO);
-        alramPendingIntent = PendingIntent.getBroadcast(this, 0, alramReceiverIntent, 0);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        // Cancel alarms
-        try {
-            alramManager.cancel(alramPendingIntent);
-        } catch (Exception e) {
-            Log.e("Distributer Activity", "AlarmManager update was not canceled. " + e.toString());
-        }
-        alramManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                1000 * 120, alramPendingIntent);
-        edit = prefs.edit();
-        edit.putBoolean("isAlramOn", true);
-        edit.commit();
-    }
+//    public void startSyncAlram() {
+//        alramManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+//        Intent alramReceiverIntent = new Intent(this, SyncAlaram.class);
+//        alramReceiverIntent.setAction(SyncAlaram.DB_CHECK_FOR_DIST_PHOTO);
+//        alramPendingIntent = PendingIntent.getBroadcast(this, 0, alramReceiverIntent, 0);
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(System.currentTimeMillis());
+//        // Cancel alarms
+//        try {
+//            alramManager.cancel(alramPendingIntent);
+//        } catch (Exception e) {
+//            Log.e("Distributer Activity", "AlarmManager update was not canceled. " + e.toString());
+//        }
+//        alramManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+//                1000 * 120, alramPendingIntent);
+//        edit = prefs.edit();
+//        edit.putBoolean("isAlramOn", true);
+//        edit.commit();
+//    }
 
     @Override
     protected void onStart() {

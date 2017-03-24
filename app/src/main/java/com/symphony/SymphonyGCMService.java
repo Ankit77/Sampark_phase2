@@ -82,8 +82,6 @@ public class SymphonyGCMService extends Service {
 
                 if (extras != null) {
                     if (!extras.isEmpty()) {
-
-
                         if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
                                 .equals(messageType)) {
                             sendNotification("Send error: " + extras.toString());
@@ -93,20 +91,6 @@ public class SymphonyGCMService extends Service {
                                     + extras.toString());
                         } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
                                 .equals(messageType)) {
-
-				/*for (int i = 0; i < 3; i++) {
-                    Log.i(TAG,
-							"Working... " + (i + 1) + "/5 @ "
-									+ SystemClock.elapsedRealtime());
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-					}
-
-				}*/
-                            Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
-
-
                             sendNotification(
                                     extras.get(SymphonyUtils.MESSAGE_KEY) + "");
                             Log.i(TAG, "Received: " + extras.toString());

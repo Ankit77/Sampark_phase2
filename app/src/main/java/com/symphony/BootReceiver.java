@@ -10,9 +10,11 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 
+import com.symphony.service.TimeTickService;
 import com.symphony.sms.SMSService;
 import com.symphony.sms.SyncAlaram;
 import com.symphony.utils.Const;
+import com.symphony.utils.SymphonyUtils;
 
 import java.util.Calendar;
 
@@ -27,32 +29,39 @@ public class BootReceiver extends BroadcastReceiver {
 
     @SuppressLint("NewApi")
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
 
         this.mcontext = context;
         e_sampark = (E_Sampark) context.getApplicationContext();
         // TODO Auto-generated method stub
         prefs = e_sampark.getSharedPreferences();
-        if ((intent.getAction().equals("android.intent.action.BOOT_COMPLETED")
-                || intent.getAction().equals("android.intent.action.QUICKBOOT_POWERON")
-        )) {
+        Log.e(BootReceiver.class.getSimpleName(), "BootReceiver call");
+        if ((intent.getAction().equals("android.intent.action.BOOT_COMPLETED") || intent.getAction().equals("android.intent.action.QUICKBOOT_POWERON"))) {
 
             startLocationService();
             e_sampark.getSharedPreferences().edit().putBoolean(Const.PREF_ISSYNCDATA, true).commit();
-            setSyncCheckStatusAlarm(context);
-            //get time diff when alarm was setup
-            long timediff = Calendar.getInstance().getTimeInMillis() - e_sampark.getSharedPreferences().getLong(Const.PREF_WIPEOUT_TIME, 0);
-            timediff = Const.WIPEDATA_INTERVAL - timediff;
+//            setSyncCheckStatusAlarm(context);
+//            //get time diff when alarm was setup
+//            long timediff = Calendar.getInstance().getTimeInMillis() - e_sampark.getSharedPreferences().getLong(Const.PREF_WIPEOUT_TIME, 0);
+//            timediff = Const.WIPEDATA_INTERVAL - timediff;
+//
+//            Log.e(BootReceiver.class.getSimpleName(), "Time is" + timediff);
+//            if (timediff > 0) {
+//                setWipeDataAlarm(mcontext, (int) timediff);
+//            } else {
+//
+//                setWipeDataAlarm(mcontext, (int) 10000);
+//            }
 
-            Log.e(BootReceiver.class.getSimpleName(), "Time is" + timediff);
-            if (timediff > 0) {
-                setWipeDataAlarm(mcontext, (int) timediff);
-            } else {
-
-                setWipeDataAlarm(mcontext, (int) 10000);
+            if (e_sampark.getSharedPreferences().getBoolean("isregister", false)) {
+                if (!SymphonyUtils.isMyServiceRunning(TimeTickService.class, context)) {
+                    Intent service_intent = new Intent(context, TimeTickService.class);
+                    context.startService(service_intent);
+                }
             }
-
         }
+
+
     }
 
 
@@ -64,27 +73,27 @@ public class BootReceiver extends BroadcastReceiver {
     }
 
 
-    private void setSyncCheckStatusAlarm(Context context) {
-        Calendar calendar = Calendar.getInstance();
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent alramReceiverIntent = new Intent(context, SyncAlaram.class);
-        alramReceiverIntent.setAction(SyncAlaram.DB_CHECK_FOR_DIST_PHOTO);
-        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(context, 0, alramReceiverIntent, 0);
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                calendar.getTimeInMillis(),
-                Const.SYNCDATA_INTERVAL, alramPendingIntent);
-    }
-
-    private void setWipeDataAlarm(Context context, int remainingTime) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MILLISECOND, remainingTime);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent alramReceiverIntent = new Intent(context, SyncAlaram.class);
-        alramReceiverIntent.setAction(SyncAlaram.WIPE_REPORT_DATA);
-        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(context, 1, alramReceiverIntent, 0);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),
-                Const.WIPEDATA_INTERVAL, alramPendingIntent);
-    }
+//    private void setSyncCheckStatusAlarm(Context context) {
+//        Calendar calendar = Calendar.getInstance();
+//        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//        Intent alramReceiverIntent = new Intent(context, SyncAlaram.class);
+//        alramReceiverIntent.setAction(SyncAlaram.DB_CHECK_FOR_DIST_PHOTO);
+//        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(context, 0, alramReceiverIntent, 0);
+//        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+//                calendar.getTimeInMillis(),
+//                Const.SYNCDATA_INTERVAL, alramPendingIntent);
+//    }
+//
+//    private void setWipeDataAlarm(Context context, int remainingTime) {
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.add(Calendar.MILLISECOND, remainingTime);
+//        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//        Intent alramReceiverIntent = new Intent(context, SyncAlaram.class);
+//        alramReceiverIntent.setAction(SyncAlaram.WIPE_REPORT_DATA);
+//        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(context, 1, alramReceiverIntent, 0);
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+//                calendar.getTimeInMillis(),
+//                Const.WIPEDATA_INTERVAL, alramPendingIntent);
+//    }
 
 }
