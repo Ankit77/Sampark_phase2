@@ -18,7 +18,6 @@ import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
 import com.symphony.utils.WriteLog;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;

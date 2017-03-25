@@ -1,20 +1,25 @@
 package com.symphony.distributer;
 
 
+import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
@@ -44,8 +49,6 @@ import com.symphony.sms.SyncAlaram;
 import com.symphony.sms.SyncManager;
 import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
-
-import org.apache.commons.net.io.Util;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
@@ -132,12 +135,34 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
                 if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKOUT)) {
                     SymphonyUtils.displayDialog(DistributerActivity.this, getString(R.string.app_name), getString(R.string.alert_logout));
                 } else {
-                    if (SymphonyUtils.isNetworkAvailable(DistributerActivity.this)) {
-                        String url = HTTP_ENDPOINT + "/eSampark_Logout.asp?user=android&pass=xand123&MNO=" + e_sampark.getSharedPreferences().getString("usermobilenumber", "") + "&empid=" + e_sampark.getSharedPreferences().getString(Const.EMPID, "");
-                        asyncLogout = new AsyncLogout();
-                        asyncLogout.execute(url);
+
+                    Cursor cur_disdata = getBaseContext().getContentResolver().
+                            query(Uri.parse("content://com.symphony.database.DBProvider/getDistributerMetaData"),
+                                    SyncManager.DISTRIBUTER_META_DATA.PROJECTION,
+                                    DB.DIST_FLAG + " = 1",
+                                    null,
+                                    null);
+                    Cursor cur_CheckData = getBaseContext().getContentResolver().
+                            query(Uri.parse("content://com.symphony.database.DBProvider/getCheckData"),
+                                    SyncManager.CHECK_DATA.PROJECTION,
+                                    DB.CHECK_FLAG + " = 1",
+                                    null,
+                                    null);
+
+
+                    if (cur_disdata.getCount() > 0 || cur_CheckData.getCount() > 0) {
+                        cur_CheckData.close();
+                        cur_disdata.close();
+                        displayDialog(DistributerActivity.this, getString(R.string.app_name), "Please Sync Pending data to Server first");
                     } else {
-                        SymphonyUtils.displayDialog(DistributerActivity.this, getString(R.string.app_name), "Please Check Internet Connection");
+
+                        if (SymphonyUtils.isNetworkAvailable(DistributerActivity.this)) {
+                            String url = HTTP_ENDPOINT + "/eSampark_Logout.asp?user=android&pass=xand123&MNO=" + e_sampark.getSharedPreferences().getString("usermobilenumber", "") + "&empid=" + e_sampark.getSharedPreferences().getString(Const.EMPID, "");
+                            asyncLogout = new AsyncLogout();
+                            asyncLogout.execute(url);
+                        } else {
+                            SymphonyUtils.displayDialog(DistributerActivity.this, getString(R.string.app_name), "Please Check Internet Connection");
+                        }
                     }
 
                 }
@@ -497,4 +522,44 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
             }
         }
     }
+
+    private void displayDialog(final Context context, final String title, final String message) {
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        if (title == null)
+            alertDialog.setTitle(context.getString(R.string.app_name));
+        else
+            alertDialog.setTitle(title);
+        alertDialog.setCancelable(false);
+
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Sync Now", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                setSyncCheckStatusAlarm(DistributerActivity.this);
+                dialog.dismiss();
+
+            }
+        });
+        if (!((Activity) context).isFinishing()) {
+
+            alertDialog.show();
+        }
+    }
+
+    private void setSyncCheckStatusAlarm(Context context) {
+        Calendar calendar = Calendar.getInstance();
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent alramReceiverIntent = new Intent(context, SyncAlaram.class);
+        alramReceiverIntent.setAction(SyncAlaram.DB_CHECK_FOR_DIST_PHOTO);
+        PendingIntent alramPendingIntent = PendingIntent.getBroadcast(context, 0, alramReceiverIntent, 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    calendar.getTimeInMillis(), alramPendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    calendar.getTimeInMillis(), alramPendingIntent);
+        }
+    }
+
 }

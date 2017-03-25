@@ -1,25 +1,17 @@
 package com.symphony.register;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.xmlpull.v1.XmlPullParser;
-
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -29,15 +21,14 @@ import com.symphony.R;
 import com.symphony.SymphonyGCMHome;
 import com.symphony.database.CheckData;
 import com.symphony.database.OTPData;
-import com.symphony.distributer.DistributerActivity;
-import com.symphony.distributer.DistributerList;
 import com.symphony.http.HttpManager;
 import com.symphony.http.HttpStatusListener;
 import com.symphony.http.OTPListener;
-import com.symphony.settings.SymphonySettings;
-import com.symphony.sms.SMSService;
 import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RegisterFragment extends Fragment {
 
@@ -228,7 +219,6 @@ public class RegisterFragment extends Fragment {
                                                 } else {
 
 
-                                                    Toast.makeText(getActivity(), "Not able to get the OTP", Toast.LENGTH_LONG).show();
                                                     Toast.makeText(getActivity(), e_sampark.getSharedPreferences().getString(Const.MESSAGE, ""), Toast.LENGTH_LONG).show();
 
                                                 }
