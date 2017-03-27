@@ -40,9 +40,6 @@ import com.symphony.sms.SMSService;
 import com.symphony.sms.SyncAlaram;
 import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
-import com.symphony.utils.WriteLog;
-
-import org.apache.commons.net.io.Util;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -270,7 +267,7 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
             super.onPostExecute(s);
             SymphonyUtils.dismissProgressDialog(progressDialog);
             if (!TextUtils.isEmpty(s)) {
-                if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     googleApiClient = new GoogleApiClient
                             .Builder(SymphonyHome.this)
                             .enableAutoManage(SymphonyHome.this, 34992, SymphonyHome.this)
