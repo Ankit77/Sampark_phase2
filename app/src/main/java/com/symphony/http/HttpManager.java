@@ -159,7 +159,7 @@ public class HttpManager {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy-hh:mm:ss a");
         String currentDateandTime = sdf.format(new Date()).replace(" ", "");
         currentDateandTime = currentDateandTime.replace(".", "");
-        HTTP_REGISTER_DEVICE_URL = HTTP_ENDPOINT + "/RegisterDevice_X1_Login.asp?user=track_new&pass=track123&" +
+        HTTP_REGISTER_DEVICE_URL = HTTP_ENDPOINT + "/RegisterDevice_X1.asp?user=track_new&pass=track123&" +
                 "username=" + username +
                 "&email=" + email +
                 "&MNO=" + mobileNumber +

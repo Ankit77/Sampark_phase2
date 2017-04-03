@@ -103,7 +103,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                     mDistributerListener.onGPSDialogOpen("Can not CHECK IN/OUT , because GPS is disabled");
                 } else {
                     if (SymphonyUtils.isAutomaticDateTime(getActivity())) {
@@ -113,7 +113,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                         } else {
 
                             if (!SymphonyUtils.isFackLocation(getActivity(), SMSService.location)) {
-                                Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                                Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                                 if (location != null) {
 
                                     Calendar calendar = Calendar.getInstance();
@@ -145,7 +145,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                                     }
                                     editor.commit();
                                 } else {
-                                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
+                                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
                                     Toast.makeText(getActivity(), "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
@@ -192,7 +192,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     @Override
     public void onResume() {
         super.onResume();
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
         getActivity().registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter("ENABLE_BUTTON"));
         getActivity().registerReceiver(checkinoutFailedReceiver, new IntentFilter("com.symphony.CHECKINOUTFAIL"));

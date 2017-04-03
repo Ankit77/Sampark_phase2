@@ -245,7 +245,7 @@ public class RegisterFragment extends Fragment {
                             } else {
 
                                 mProgressBar.dismiss();
-                                Toast.makeText(getActivity(), e_sampark.getSharedPreferences().getString(Const.MESSAGE, ""), Toast.LENGTH_LONG).show();
+                                SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), getString(R.string.alert_not_valid_number));
                             }
                         }
 
@@ -253,7 +253,6 @@ public class RegisterFragment extends Fragment {
                         public void onTimeOut() {
                             // TODO Auto-generated method stub
                             mProgressBar.dismiss();
-
                             Toast.makeText(getActivity(), "Request Timeout occurs , please try again", Toast.LENGTH_LONG).show();
 
                         }
@@ -262,7 +261,6 @@ public class RegisterFragment extends Fragment {
                         public void onNetworkDisconnect() {
                             // TODO Auto-generated method stub
                             mProgressBar.dismiss();
-
                             Toast.makeText(getActivity(), "Network not available at this moment", Toast.LENGTH_SHORT).show();
 
                         }
@@ -287,12 +285,12 @@ public class RegisterFragment extends Fragment {
 				*/
 
 				/*Intent intent = new Intent(getActivity(),DistributerActivity.class);
-				getActivity().startActivity(intent); 	
+                getActivity().startActivity(intent);
 				
 				Intent intentService = new Intent(getActivity(),SMSService.class);
 				intentService.setAction(SMSService.FETCH_LOCATION_INTENT);
 				getActivity().startService(intentService);*/ 
-				
+
 				/*HttpManager httpManager = new HttpManager(getActivity());
 				httpManager.getDistributers("9375494877"); */
 
