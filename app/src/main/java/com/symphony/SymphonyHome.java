@@ -35,6 +35,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.symphony.distributer.DistributerActivity;
 import com.symphony.register.RegisterFragment;
+import com.symphony.service.GetCheckInMeterService;
 import com.symphony.service.TimeTickService;
 import com.symphony.sms.SMSService;
 import com.symphony.sms.SyncAlaram;
@@ -81,6 +82,9 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         this.getSupportActionBar().setIcon(android.R.color.transparent);
         prefs = e_sampark.getSharedPreferences();
+        //get distance in meter for checkin location
+        Intent checkinintent = new Intent(SymphonyHome.this, GetCheckInMeterService.class);
+        startService(checkinintent);
         asyncRegisterGCM = new AsyncRegisterGCM();
         asyncRegisterGCM.execute();
         if (e_sampark.getSharedPreferences().getBoolean("isregister", false)) {

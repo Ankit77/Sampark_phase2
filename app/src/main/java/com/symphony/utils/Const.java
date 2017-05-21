@@ -23,6 +23,9 @@ public class Const {
     public static final String PREF_STRAT_TIME = "PREF_STRAT_TIME";
     public static final String PREF_ISSYNCDATA = "PREF_ISSYNC";
     public static final String PREF_WIPEOUT_TIME = "PREF_WIPEOUT_TIME";
+    public static final String PREF_CHECKIN_METER = "PREF_CHECKIN_METER";
+    public static final String PREF_AUTH_TOKEN = "PREF_AUTH_TOKEN";
+    public static final int DEFAULT_CHECKIN_METER = 10;
     //public static final long WIPEDATA_INTERVAL = 1000 * 60 * 1;
 
     public static final long WIPEDATA_INTERVAL = 1000 * 60 * 15;

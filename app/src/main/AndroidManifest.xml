@@ -111,6 +111,7 @@
         <service
             android:name=".service.TimeTickService"
             android:enabled="true"></service>
+        <service android:name=".service.GetCheckInMeterService"></service>
 
         <activity
             android:name=".report.SymphonyReport"
