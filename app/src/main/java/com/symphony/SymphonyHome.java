@@ -41,9 +41,6 @@ import com.symphony.sms.SMSService;
 import com.symphony.sms.SyncAlaram;
 import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
-import com.symphony.utils.WriteLog;
-
-import org.apache.commons.net.io.Util;
 
 import java.io.IOException;
 import java.util.Calendar;

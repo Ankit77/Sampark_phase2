@@ -28,8 +28,8 @@ public class Const {
     public static final int DEFAULT_CHECKIN_METER = 10;
     //public static final long WIPEDATA_INTERVAL = 1000 * 60 * 1;
 
-    public static final long WIPEDATA_INTERVAL = 1000 * 60 * 15;
-    //    public static final long WIPEDATA_INTERVAL = 1000 * 60 * 60 * 48;
+    // public static final long WIPEDATA_INTERVAL = 1000 * 60 * 15;
+    public static final long WIPEDATA_INTERVAL = 1000 * 60 * 60 * 48;
     public static final long SYNCDATA_INTERVAL = 1000 * 60 * 2;
 
     public static final String PREF_WIPEDATA = "WIPEDATA";
