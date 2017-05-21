@@ -2,6 +2,7 @@ package com.symphony.register;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -21,14 +22,18 @@ import com.symphony.R;
 import com.symphony.SymphonyGCMHome;
 import com.symphony.database.CheckData;
 import com.symphony.database.OTPData;
+import com.symphony.distributer.DistributerActivity;
 import com.symphony.http.HttpManager;
 import com.symphony.http.HttpStatusListener;
 import com.symphony.http.OTPListener;
+import com.symphony.http.WSLogout;
 import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static com.symphony.utils.Const.HTTP_ENDPOINT;
 
 public class RegisterFragment extends Fragment {
 
@@ -42,6 +47,8 @@ public class RegisterFragment extends Fragment {
     private String INT_HTTP_SERVER = "61.12.85.74";
     private String INT_HTTP_PORT = "900";
     private E_Sampark e_sampark;
+    private Button btnForcrLogout;
+    private AsyncLogout asyncLogout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,6 +58,7 @@ public class RegisterFragment extends Fragment {
         registerBtn = (Button) v.findViewById(R.id.registerBtn);
         userNameText = (EditText) v.findViewById(R.id.userNameField);
         mobileNumberText = (EditText) v.findViewById(R.id.mobileField);
+        btnForcrLogout = (Button) v.findViewById(R.id.forcrLogoutBtn);
         return v;
 
 
@@ -74,6 +82,19 @@ public class RegisterFragment extends Fragment {
         mProgressBar.hide();
         mProgressBar.setCanceledOnTouchOutside(false);
         mProgressBar.setCancelable(false);
+
+        btnForcrLogout.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (SymphonyUtils.isNetworkAvailable(getActivity())) {
+                    String url = HTTP_ENDPOINT + "/eSampark_Logout.asp?user=android&pass=xand123&MNO=" + e_sampark.getSharedPreferences().getString("usermobilenumber", "") + "&empid=" + e_sampark.getSharedPreferences().getString(Const.EMPID, "") + "forcelogout=1";
+                    asyncLogout = new AsyncLogout();
+                    asyncLogout.execute(url);
+                } else {
+                    SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), "Please Check Internet Connection");
+                }
+            }
+        });
 
 
         registerBtn.setOnClickListener(new OnClickListener() {
@@ -245,7 +266,7 @@ public class RegisterFragment extends Fragment {
                             } else {
 
                                 mProgressBar.dismiss();
-                                SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), getString(R.string.alert_not_valid_number));
+                                SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), "Not a valid number");
                             }
                         }
 
@@ -292,7 +313,7 @@ public class RegisterFragment extends Fragment {
 				getActivity().startService(intentService);*/ 
 
 				/*HttpManager httpManager = new HttpManager(getActivity());
-				httpManager.getDistributers("9375494877"); */
+                httpManager.getDistributers("9375494877"); */
 
 
             }
@@ -317,5 +338,39 @@ public class RegisterFragment extends Fragment {
 
     }
 
+    /**
+     * Asynctask for logout
+     */
+    private class AsyncLogout extends AsyncTask<String, Void, Boolean> {
+
+        private WSLogout wsLogout;
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = SymphonyUtils.displayProgressDialog(getActivity());
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            wsLogout = new WSLogout();
+            return wsLogout.executeTown(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            SymphonyUtils.dismissProgressDialog(progressDialog);
+            if (aBoolean) {
+                e_sampark.getSharedPreferences().edit().clear().commit();
+                SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), "You are successfully logout");
+            } else {
+                SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), wsLogout.getMessage());
+            }
+        }
+    }
 
 }
+
+

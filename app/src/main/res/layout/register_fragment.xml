@@ -76,6 +76,22 @@
                 android:text="@string/register_signin_button"
                 android:textColor="@color/text_blue"
                 android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/forcrLogoutBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/register_button_top_margin"
+                android:background="@drawable/button_border"
+                android:gravity="center"
+                android:shadowColor="@color/text_white"
+                android:shadowDx="-1"
+                android:shadowDy="1"
+                android:shadowRadius="0.04"
+                android:text="Force Logout"
+                android:textColor="@color/text_blue"
+                android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
 
