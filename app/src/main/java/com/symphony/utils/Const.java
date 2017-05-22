@@ -25,6 +25,7 @@ public class Const {
     public static final String PREF_WIPEOUT_TIME = "PREF_WIPEOUT_TIME";
     public static final String PREF_CHECKIN_METER = "PREF_CHECKIN_METER";
     public static final String PREF_AUTH_TOKEN = "PREF_AUTH_TOKEN";
+    public static final String PREF_LAST_DATETIME = "PREF_LAST_DATETIME";
     public static final int DEFAULT_CHECKIN_METER = 10;
     //public static final long WIPEDATA_INTERVAL = 1000 * 60 * 1;
 

@@ -512,7 +512,7 @@ public class HttpManager {
                 String message = readusertype(parser);
                 data.setMessage(message);
             } else if (name.equals("authtoken")) {
-                String authtoken = readusertype(parser);
+                String authtoken = readuserAuthToken(parser);
                 e_sampark.getSharedPreferences().edit().putString(Const.PREF_AUTH_TOKEN, authtoken).commit();
             }
         }
@@ -685,6 +685,17 @@ public class HttpManager {
             parser.nextTag();
         }
         parser.require(XmlPullParser.END_TAG, null, "usertype");
+        return usertype;
+    }
+
+    private String readuserAuthToken(XmlPullParser parser) throws XmlPullParserException, IOException {
+        parser.require(XmlPullParser.START_TAG, null, "authtoken");
+        String usertype = null;
+        if (parser.next() == XmlPullParser.TEXT) {
+            usertype = parser.getText();
+            parser.nextTag();
+        }
+        parser.require(XmlPullParser.END_TAG, null, "authtoken");
         return usertype;
     }
 

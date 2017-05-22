@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/checkStatusFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundapp"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="@dimen/home_screen_pad" >
+    android:padding="@dimen/home_screen_pad">
 
     <LinearLayout
         android:layout_width="300dip"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
-        
 
         <TextView
             android:id="@+id/checkStatusText"
@@ -25,6 +24,7 @@
             android:text="@string/checkstatus_text"
             android:textColor="@color/edit_text_color_blue"
             android:textSize="@dimen/verify_textview_size" />
+
         <TextView
             android:id="@+id/txtStatusLabel"
             android:layout_width="fill_parent"
@@ -32,9 +32,9 @@
             android:layout_marginBottom="15dip"
             android:gravity="center"
             android:text="@string/button_text"
-            android:visibility="gone"
             android:textColor="@color/edit_text_color_blue"
-            android:textSize="@dimen/verify_textview_size" />
+            android:textSize="@dimen/verify_textview_size"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/checkStatus"
@@ -51,4 +51,12 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:backgroundTint="@color/colorAccent"
+        android:src="@drawable/refresh_use" />
+</FrameLayout>

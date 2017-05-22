@@ -1,6 +1,7 @@
 package com.symphony.distributer;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -27,11 +29,14 @@ import android.widget.Toast;
 
 import com.symphony.E_Sampark;
 import com.symphony.R;
+import com.symphony.http.WSGetMasterData;
+import com.symphony.model.MasterDataModel;
 import com.symphony.receiver.AlarmReceiver;
 import com.symphony.sms.SMSService;
 import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class CheckStatus extends Fragment implements CheckStatusListener, LocationListener, SMSService.OnStatusFailedListner {
@@ -48,6 +53,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
     // private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
     private E_Sampark e_sampark;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onStatusFailed() {
@@ -381,7 +387,6 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                     setCheckOut();
                 }
             }
-
         }
     };
 
@@ -389,7 +394,6 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     BroadcastReceiver checkinoutFailedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             if (intent != null) {
                 if (intent.getAction().equalsIgnoreCase("com.symphony.CHECKINOUTFAIL")) {
                     checkStatus.setVisibility(View.VISIBLE);
@@ -402,10 +406,32 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                     }
                 }
 
-
             }
         }
     };
+
+    private class AsyncLoadMasterData extends AsyncTask<String, Void, ArrayList<MasterDataModel>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = SymphonyUtils.displayProgressDialog(getActivity());
+        }
+
+        @Override
+        protected ArrayList<MasterDataModel> doInBackground(String... strings) {
+            WSGetMasterData wsGetMasterData = new WSGetMasterData();
+            return wsGetMasterData.executeTown(e_sampark.getSharedPreferences().getString(Const.PREF_LAST_DATETIME,"" ), getActivity());
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<MasterDataModel> masterDataModels) {
+            super.onPostExecute(masterDataModels);
+            SymphonyUtils.dismissProgressDialog(progressDialog);
+            if (masterDataModels != null && masterDataModels.size() > 0) {
+                e_sampark.getSharedPreferences().edit().putString(Const.PREF_LAST_DATETIME, "").commit();
+            }
+        }
+    }
 
 
 }

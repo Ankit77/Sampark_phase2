@@ -1,7 +1,10 @@
 package com.symphony.register;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,7 +25,6 @@ import com.symphony.R;
 import com.symphony.SymphonyGCMHome;
 import com.symphony.database.CheckData;
 import com.symphony.database.OTPData;
-import com.symphony.distributer.DistributerActivity;
 import com.symphony.http.HttpManager;
 import com.symphony.http.HttpStatusListener;
 import com.symphony.http.OTPListener;
@@ -86,12 +88,12 @@ public class RegisterFragment extends Fragment {
         btnForcrLogout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SymphonyUtils.isNetworkAvailable(getActivity())) {
-                    String url = HTTP_ENDPOINT + "/eSampark_Logout.asp?user=android&pass=xand123&MNO=" + e_sampark.getSharedPreferences().getString("usermobilenumber", "") + "&empid=" + e_sampark.getSharedPreferences().getString(Const.EMPID, "") + "forcelogout=1";
-                    asyncLogout = new AsyncLogout();
-                    asyncLogout.execute(url);
+                if (TextUtils.isEmpty(userNameText.getText().toString())) {
+                    SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), "Please Enter Username");
+                } else if (TextUtils.isEmpty(userNameText.getText().toString())) {
+                    SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), "Please Enter MobileNo.");
                 } else {
-                    SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), "Please Check Internet Connection");
+                    displayWarningForceLogoutDialog(getActivity(), getString(R.string.app_name), "If you force logout,All your pending data from previous device are removed");
                 }
             }
         });
@@ -371,6 +373,46 @@ public class RegisterFragment extends Fragment {
         }
     }
 
+
+    public void displayWarningForceLogoutDialog(final Context context, final String title, final String message) {
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        if (title == null)
+            alertDialog.setTitle(context.getString(R.string.app_name));
+        else
+            alertDialog.setTitle(title);
+        alertDialog.setCancelable(false);
+
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ok", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+                if (SymphonyUtils.isNetworkAvailable(context)) {
+                    String url = HTTP_ENDPOINT + "/eSampark_Logout.asp?user=android&pass=xand123&MNO=" + mobileNumberText.getText().toString() + "&empid=" + e_sampark.getSharedPreferences().getString(Const.EMPID, "0") + "&forcelogout=1";
+                    asyncLogout = new AsyncLogout();
+                    asyncLogout.execute(url);
+                } else {
+                    SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), "Please Check Internet Connection");
+                }
+
+            }
+        });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+
+
+            }
+        });
+        if (!((Activity) context).isFinishing()) {
+
+            alertDialog.show();
+        }
+    }
 }
 
 

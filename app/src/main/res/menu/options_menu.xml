@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:com.symphony="http://schemas.android.com/apk/res-auto"
-   >
-    <item android:id="@+id/distributer_search"
-          android:icon="@drawable/search"
-          com.symphony:showAsAction="always|collapseActionView"
-          android:title="@string/distributer_search_title"
-          com.symphony:actionViewClass="android.support.v7.widget.SearchView"
-       
-          />
-    
-        <item android:id="@+id/distributer_refresh"
-          android:icon="@drawable/refresh_use"
-          android:title="@string/distributer_refresh_title"
-          com.symphony:showAsAction="always|collapseActionView"
-          
-       
-          />
-        
-          <item android:id="@+id/distributer_listview"
-          com.symphony:showAsAction="always"
-          android:title="@string/distributer_listview_title"
-          android:icon="@drawable/list"
-          />
-          
-            <item android:id="@+id/symphony_settings"
-          com.symphony:showAsAction="always"
-          android:title="@string/symphony_settings_title"
-          android:icon="@drawable/setting_use"
-          />
-          
-          <item android:id="@+id/symphony_exit"
-          com.symphony:showAsAction="always"
-          android:title="@string/symphony_exit_title"
-          android:icon="@drawable/logout"
-          />
-          
+    xmlns:com.symphony="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/distributer_search"
+        android:icon="@drawable/search"
+        android:title="@string/distributer_search_title"
+        com.symphony:actionViewClass="android.support.v7.widget.SearchView"
+        com.symphony:showAsAction="always|collapseActionView"
+
+        />
+
+    <item
+        android:id="@+id/distributer_refresh"
+        android:icon="@drawable/refresh_use"
+        android:title="@string/distributer_refresh_title"
+        com.symphony:showAsAction="always|collapseActionView"
+
+
+        />
+
+    <item
+        android:id="@+id/distributer_listview"
+        android:icon="@drawable/list"
+        android:title="@string/distributer_listview_title"
+        com.symphony:showAsAction="always" />
+
+    <item
+        android:id="@+id/symphony_settings"
+        android:icon="@drawable/setting_use"
+        android:title="@string/symphony_settings_title"
+        com.symphony:showAsAction="always" />
+
+    <item
+        android:id="@+id/symphony_exit"
+        android:icon="@drawable/logout"
+        android:title="@string/symphony_exit_title"
+        com.symphony:showAsAction="always" />
+
 </menu>
