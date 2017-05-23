@@ -28,7 +28,7 @@ public class Const {
     public static final String PREF_LAST_DATETIME = "PREF_LAST_DATETIME";
     public static final String PREF_IS_LOAD_MASTER_DATA_FIRSTTIME = "PREF_IS_LOAD_MASTER_DATA_FIRSTTIME";
     public static final int DEFAULT_CHECKIN_METER = 10;
-    public static final String DEFAULT_DATETIME_FORMAT = "dd/mm/yyyy-hh:mm";
+    public static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy-hh:mm:ss";
     //public static final long WIPEDATA_INTERVAL = 1000 * 60 * 1;
 
     // public static final long WIPEDATA_INTERVAL = 1000 * 60 * 15;

@@ -192,7 +192,6 @@ public class SymphonyUtils {
 
     public static String getCurrentDataTime() {
         Calendar c = Calendar.getInstance();
-        System.out.println("Current time =&gt; " + c.getTime());
 
         SimpleDateFormat df = new SimpleDateFormat(Const.DEFAULT_DATETIME_FORMAT);
         String formattedDate = df.format(c.getTime());

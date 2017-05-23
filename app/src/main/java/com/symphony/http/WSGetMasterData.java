@@ -3,6 +3,7 @@ package com.symphony.http;
 import android.content.Context;
 
 import com.symphony.model.MasterDataModel;
+import com.symphony.utils.WriteLog;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -25,6 +26,7 @@ public class WSGetMasterData {
 
     public ArrayList<MasterDataModel> executeTown(String lastdattime, Context context) {
         String murl = "http://61.12.85.74:800/eSampark_Masterdata.asp?NM=track_new&PASS=track123&xMNO=9374146578&lastdate=" + lastdattime;
+        WriteLog.E("URL", murl);
         URL url = null;
         try {
             url = new URL(murl);
