@@ -1,20 +1,12 @@
 package com.symphony;
 
-import android.app.AlarmManager;
 import android.app.Application;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.util.Log;
 
+import com.symphony.database.SymphonyDB;
 import com.symphony.receiver.MyService;
-import com.symphony.sms.SyncAlaram;
-import com.symphony.utils.Const;
-
-import java.util.Calendar;
 
 /**
  * Created by indianic on 19/12/15.
@@ -22,6 +14,12 @@ import java.util.Calendar;
 public class E_Sampark extends Application {
 
     private SharedPreferences sharedPreferences;
+
+    public void setSymphonyDB(SymphonyDB symphonyDB) {
+        this.symphonyDB = symphonyDB;
+    }
+
+    private SymphonyDB symphonyDB;
 //    private AlarmManager alarmManager;
 //    private PendingIntent pendingIntent;
 
@@ -29,6 +27,8 @@ public class E_Sampark extends Application {
     public void onCreate() {
         super.onCreate();
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+//        symphonyDB = new SymphonyDB(getApplicationContext());
+////        symphonyDB.openDataBase();
         Intent intentLocationService = new Intent(getApplicationContext(), MyService.class);
         startService(intentLocationService);
 //        if (!sharedPreferences.getBoolean(Const.PREF_ISSYNCDATA, false)) {
@@ -50,6 +50,10 @@ public class E_Sampark extends Application {
 //                pendingIntent);
 //    }
 
+
+    public SymphonyDB getSymphonyDB() {
+        return symphonyDB;
+    }
 
     public SharedPreferences getSharedPreferences() {
         return sharedPreferences;
@@ -99,5 +103,8 @@ public class E_Sampark extends Application {
 //                calendar.getTimeInMillis(),
 //                Const.WIPEDATA_INTERVAL, alramPendingIntent);
 //    }
+
+
+
 
 }

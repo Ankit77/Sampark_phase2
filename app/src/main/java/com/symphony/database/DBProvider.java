@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.symphony.E_Sampark;
+
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 
@@ -22,6 +24,7 @@ public class DBProvider extends ContentProvider {
     private ContentObserver contentObserver;
     private ContentObserver insertContentObserver;
     private static final UriMatcher MATCHER;
+    private E_Sampark e_sampark;
 
 
     static {
@@ -279,8 +282,8 @@ public class DBProvider extends ContentProvider {
         SQLiteDatabase.loadLibs(getContext());
         mDBHelper = new SymphonyDB(getContext());
         mDB = mDBHelper.getWritableDatabase(DB.DATABASE_STRING);
-
-
+        e_sampark=(E_Sampark)getContext();
+        e_sampark.setSymphonyDB(mDBHelper);
         return (mDBHelper == null ? false : true);
     }
 

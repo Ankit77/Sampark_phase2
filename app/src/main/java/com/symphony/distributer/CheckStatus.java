@@ -13,6 +13,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 
 import com.symphony.E_Sampark;
 import com.symphony.R;
+import com.symphony.http.WSGetDeletedMasterData;
 import com.symphony.http.WSGetMasterData;
 import com.symphony.model.MasterDataModel;
 import com.symphony.receiver.AlarmReceiver;
@@ -39,7 +41,7 @@ import com.symphony.utils.SymphonyUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class CheckStatus extends Fragment implements CheckStatusListener, LocationListener, SMSService.OnStatusFailedListner {
+public class CheckStatus extends Fragment implements CheckStatusListener, LocationListener, SMSService.OnStatusFailedListner, OnClickListener {
 
     private Button checkStatus;
     private TextView txtMessage;
@@ -54,37 +56,19 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     // private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
     private E_Sampark e_sampark;
     private ProgressDialog progressDialog;
+    private FloatingActionButton fbSyncMasterData;
+    private AsyncLoadMasterData asyncLoadMasterData;
+    private AsyncGetDeletedMasterData asyncGetDeletedMasterData;
 
     @Override
     public void onStatusFailed() {
 
     }
 
-//    public class LocationFailedReceiver extends BroadcastReceiver {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            // TODO Auto-generated method stub
-//
-//            if (intent != null) {
-//                if (intent.getAction() == DistributerActivity.LOCATION_RECEIVER) {
-//                    Bundle bundle = intent.getExtras();
-//                    if (bundle != null) {
-//                        DistributerActivity.currentLocation = bundle.getString("current_location");
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mDistributerListener = (DistributerActivityListener) getActivity();
-//        locationFailedReceiver = new LocationFailedReceiver();
-
-
     }
 
 
@@ -92,80 +76,17 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         e_sampark = (E_Sampark) getActivity().getApplicationContext();
-//        Long aLong = SymphonyUtils.getCurrentNetworkTime();
-//        Log.e(CheckStatus.class.getSimpleName(), "" + aLong);
-
         setHasOptionsMenu(true);
         mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         View v = inflater.inflate(R.layout.checkstatus_fragment, null);
         checkStatus = (Button) v.findViewById(R.id.checkStatus);
         txtMessage = (TextView) v.findViewById(R.id.txtStatusLabel);
         txtCheckINOUTLabel = (TextView) v.findViewById(R.id.checkStatusText);
+        fbSyncMasterData = (FloatingActionButton) v.findViewById(R.id.fabSynCMasterData);
         prefs = e_sampark.getSharedPreferences();
         editor = prefs.edit();
-
-        checkStatus.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    mDistributerListener.onGPSDialogOpen("Can not CHECK IN/OUT , because GPS is disabled");
-                } else {
-                    if (SymphonyUtils.isAutomaticDateTime(getActivity())) {
-                        if (SMSService.addressLatLng == null || TextUtils.isEmpty(SMSService.addressLatLng)) {
-                            Toast.makeText(getActivity(), "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
-                            return;
-                        } else {
-
-                            if (!SymphonyUtils.isFackLocation(getActivity(), SMSService.location)) {
-                                Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                                if (location != null) {
-
-                                    Calendar calendar = Calendar.getInstance();
-                                    checkStatus.setEnabled(false);
-                                    checkStatus.setVisibility(View.GONE);
-                                    txtMessage.setVisibility(View.VISIBLE);
-                                    txtCheckINOUTLabel.setVisibility(View.GONE);
-                                    SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
-                                    editor.putBoolean("ISENABLE", false);
-                                    editor.putLong("TIME", calendar.getTimeInMillis());
-                                    editor.putLong("COUNTDOWNTIMER", TIME_DIFFERENCE);
-                                    editor.commit();
-
-
-                                    if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
-                                        editor.putString("TAG", Const.CHECKOUT);
-                                        Intent intentService = new Intent(getActivity(), SMSService.class);
-                                        intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
-                                        intentService.putExtra("checkstatus", true);
-                                        getActivity().startService(intentService);
-                                        setCheckOut();
-                                    } else {
-                                        editor.putString("TAG", Const.CHECKIN);
-                                        Intent intentService = new Intent(getActivity(), SMSService.class);
-                                        intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
-                                        intentService.putExtra("checkstatus", false);
-                                        getActivity().startService(intentService);
-                                        setCheckIn();
-                                    }
-                                    editor.commit();
-                                } else {
-                                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
-                                    Toast.makeText(getActivity(), "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Toast.makeText(getActivity(), "Please Disable Fake Location", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                    } else {
-                        Toast.makeText(getActivity(), "Please Make date & Time setting to automatic mode", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-        });
+        checkStatus.setOnClickListener(this);
+        fbSyncMasterData.setOnClickListener(this);
         return v;
     }
 
@@ -234,20 +155,6 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
             txtCheckINOUTLabel.setVisibility(View.VISIBLE);
         }
 
-
-//        if (e_sampark.getSharedPreferences().getBoolean("ISENABLE", true)) {
-//            checkStatus.setEnabled(true);
-//            checkStatus.setVisibility(View.VISIBLE);
-//            txtMessage.setVisibility(View.GONE);
-//            txtCheckINOUTLabel.setVisibility(View.VISIBLE);
-//
-//        } else {
-//            checkStatus.setEnabled(false);
-//            checkStatus.setVisibility(View.GONE);
-//            txtMessage.setVisibility(View.VISIBLE);
-//            txtCheckINOUTLabel.setVisibility(View.GONE);
-//        }
-
         if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
             setCheckIn();
         } else {
@@ -259,14 +166,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     @Override
     public void onPause() {
         super.onPause();
-
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("CHECK IN/OUT");
         mLocationManager.removeUpdates(this);
-
-//        this.getActivity().unregisterReceiver(locationFailedReceiver);
-
-
     }
 
     @Override
@@ -410,6 +311,74 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         }
     };
 
+    @Override
+    public void onClick(View view) {
+        if (view == fbSyncMasterData) {
+            if (SymphonyUtils.isNetworkAvailable(getActivity())) {
+                asyncLoadMasterData = new AsyncLoadMasterData();
+                asyncLoadMasterData.execute();
+            } else {
+                SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), "Please Check Internet Connection");
+            }
+
+        } else if (view == checkStatus) {
+            if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                mDistributerListener.onGPSDialogOpen("Can not CHECK IN/OUT , because GPS is disabled");
+            } else {
+                if (SymphonyUtils.isAutomaticDateTime(getActivity())) {
+                    if (SMSService.addressLatLng == null || TextUtils.isEmpty(SMSService.addressLatLng)) {
+                        Toast.makeText(getActivity(), "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+
+                        if (!SymphonyUtils.isFackLocation(getActivity(), SMSService.location)) {
+                            Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                            if (location != null) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                checkStatus.setEnabled(false);
+                                checkStatus.setVisibility(View.GONE);
+                                txtMessage.setVisibility(View.VISIBLE);
+                                txtCheckINOUTLabel.setVisibility(View.GONE);
+                                SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
+                                editor.putBoolean("ISENABLE", false);
+                                editor.putLong("TIME", calendar.getTimeInMillis());
+                                editor.putLong("COUNTDOWNTIMER", TIME_DIFFERENCE);
+                                editor.commit();
+
+
+                                if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
+                                    editor.putString("TAG", Const.CHECKOUT);
+                                    Intent intentService = new Intent(getActivity(), SMSService.class);
+                                    intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
+                                    intentService.putExtra("checkstatus", true);
+                                    getActivity().startService(intentService);
+                                    setCheckOut();
+                                } else {
+                                    editor.putString("TAG", Const.CHECKIN);
+                                    Intent intentService = new Intent(getActivity(), SMSService.class);
+                                    intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
+                                    intentService.putExtra("checkstatus", false);
+                                    getActivity().startService(intentService);
+                                    setCheckIn();
+                                }
+                                editor.commit();
+                            } else {
+                                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
+                                Toast.makeText(getActivity(), "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "Please Disable Fake Location", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                } else {
+                    Toast.makeText(getActivity(), "Please Make date & Time setting to automatic mode", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
     private class AsyncLoadMasterData extends AsyncTask<String, Void, ArrayList<MasterDataModel>> {
         @Override
         protected void onPreExecute() {
@@ -420,18 +389,45 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected ArrayList<MasterDataModel> doInBackground(String... strings) {
             WSGetMasterData wsGetMasterData = new WSGetMasterData();
-            return wsGetMasterData.executeTown(e_sampark.getSharedPreferences().getString(Const.PREF_LAST_DATETIME,"" ), getActivity());
+            return wsGetMasterData.executeTown(e_sampark.getSharedPreferences().getString(Const.PREF_LAST_DATETIME, ""), getActivity());
         }
 
         @Override
         protected void onPostExecute(ArrayList<MasterDataModel> masterDataModels) {
             super.onPostExecute(masterDataModels);
-            SymphonyUtils.dismissProgressDialog(progressDialog);
+
             if (masterDataModels != null && masterDataModels.size() > 0) {
-                e_sampark.getSharedPreferences().edit().putString(Const.PREF_LAST_DATETIME, "").commit();
+                e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
+                e_sampark.getSharedPreferences().edit().putString(Const.PREF_LAST_DATETIME, SymphonyUtils.getCurrentDataTime()).commit();
             }
+            asyncGetDeletedMasterData = new AsyncGetDeletedMasterData();
+            asyncGetDeletedMasterData.execute();
         }
     }
 
+    private class AsyncGetDeletedMasterData extends AsyncTask<Void, Void, ArrayList<String>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<String> doInBackground(Void... voids) {
+            WSGetDeletedMasterData wsGetDeletedMasterData = new WSGetDeletedMasterData();
+            return wsGetDeletedMasterData.executeTown(e_sampark.getSharedPreferences().getString(Const.PREF_LAST_DATETIME, ""), getActivity());
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> masterIds) {
+            super.onPostExecute(masterIds);
+
+            if (masterIds != null && masterIds.size() > 0) {
+                for (int i = 0; i < masterIds.size(); i++) {
+                    e_sampark.getSymphonyDB().deleteMasterData(masterIds.get(i));
+                }
+            }
+            SymphonyUtils.dismissProgressDialog(progressDialog);
+        }
+    }
 
 }

@@ -365,7 +365,7 @@ public class RegisterFragment extends Fragment {
             super.onPostExecute(aBoolean);
             SymphonyUtils.dismissProgressDialog(progressDialog);
             if (aBoolean) {
-                e_sampark.getSharedPreferences().edit().clear().commit();
+//                e_sampark.getSharedPreferences().edit().clear().commit();
                 SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), "You are successfully logout");
             } else {
                 SymphonyUtils.displayDialog(getActivity(), getString(R.string.app_name), wsLogout.getMessage());

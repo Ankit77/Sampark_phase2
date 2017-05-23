@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/checkStatusFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -52,11 +53,11 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fabSynCMasterData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"
-        android:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/colorAccent"
         android:src="@drawable/refresh_use" />
 </FrameLayout>

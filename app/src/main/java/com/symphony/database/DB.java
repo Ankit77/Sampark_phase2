@@ -68,9 +68,8 @@ public class DB {
 	
 	public static final String GET_NOTIFICATION_DATA = "getNotificationData";
 	public static final String DELETE_CHECKINOUTBYID = "deletecheckinoutById";
-	
-	
-	
+
+
 
 	
 	
@@ -101,8 +100,27 @@ public class DB {
 	public static final String DIST_ADDRESS = "dist_address";
 	public static final String DIST_AREA = "dist_area";
 	public static final String DIST_TIMESTAMP = "dist_timestamp";
-	
-	
+
+
+
+	//Customer
+	public static final String MASTER_TABLE = "latlongtable";
+	public static final String COLUME_MASTER_DEALERLETLONG_ID = "dealerletlongid";
+	public static final String COLUME_MASTER_DEALERENROLMENT_ID = "dealerenrolmentid";
+	public static final String COLUME_MASTER_LAT = "lat";
+	public static final String COLUME_MASTER_LANG = "lang";
+	public static final String COLUME_MASTER_CREATED_ON = "created_on";
+	public static final String COLUME_MASTER_NAME = "name";
+	public static final String COLUME_MASTER_ADDR = "addr";
+
+
+
+
+
+	static final String CREATE_MASTER_TABLE = "CREATE TABLE IF NOT EXISTS " + MASTER_TABLE + " (" + COLUME_MASTER_DEALERLETLONG_ID + " TEXT, " + COLUME_MASTER_DEALERENROLMENT_ID
+			+ " TEXT," + COLUME_MASTER_LAT + " TEXT," + COLUME_MASTER_LANG + " TEXT," + COLUME_MASTER_CREATED_ON + " TEXT," + COLUME_MASTER_NAME + " TEXT," + COLUME_MASTER_ADDR + " TEXT)";
+
+
 	// create statement
 	public static final String CREATE_DISTRIBUTER_TABLE=
 						

@@ -1,29 +1,12 @@
 package com.symphony.utils;
 
-import java.net.InetAddress;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import com.inforoeste.mocklocationdetector.MockLocationDetector;
-import com.symphony.BootReceiver;
-import com.symphony.E_Sampark;
-import com.symphony.R;
-import com.symphony.sms.SyncAlaram;
-
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.location.Location;
@@ -31,11 +14,18 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
-import org.apache.commons.net.ntp.NTPUDPClient;
-import org.apache.commons.net.ntp.TimeInfo;
+import com.inforoeste.mocklocationdetector.MockLocationDetector;
+import com.symphony.E_Sampark;
+import com.symphony.R;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class SymphonyUtils {
 
@@ -198,5 +188,58 @@ public class SymphonyUtils {
             }
         }
         return false;
+    }
+
+    public static String getCurrentDataTime() {
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time =&gt; " + c.getTime());
+
+        SimpleDateFormat df = new SimpleDateFormat(Const.DEFAULT_DATETIME_FORMAT);
+        String formattedDate = df.format(c.getTime());
+        return formattedDate;
+// Now formattedDate have current date/time
+    }
+
+    public static void copyDatabase(Context c, String DATABASE_NAME) {
+        String databasePath = c.getDatabasePath(DATABASE_NAME).getPath();
+        File f = new File(databasePath);
+        OutputStream myOutput = null;
+        InputStream myInput = null;
+//        Log.d("testing", " testing db path " + databasePath);
+//        Log.d("testing", " testing db exist " + f.exists());
+
+        if (f.exists()) {
+            try {
+
+                File directory = new File("/mnt/sdcard/DB_DEBUG");
+                if (!directory.exists())
+                    directory.mkdir();
+
+                myOutput = new FileOutputStream(directory.getAbsolutePath()
+                        + "/" + DATABASE_NAME);
+                myInput = new FileInputStream(databasePath);
+
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = myInput.read(buffer)) > 0) {
+                    myOutput.write(buffer, 0, length);
+                }
+
+                myOutput.flush();
+            } catch (Exception e) {
+            } finally {
+                try {
+                    if (myOutput != null) {
+                        myOutput.close();
+                        myOutput = null;
+                    }
+                    if (myInput != null) {
+                        myInput.close();
+                        myInput = null;
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
     }
 }

@@ -34,6 +34,8 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.symphony.distributer.DistributerActivity;
+import com.symphony.http.WSGetMasterData;
+import com.symphony.model.MasterDataModel;
 import com.symphony.register.RegisterFragment;
 import com.symphony.service.GetCheckInMeterService;
 import com.symphony.service.TimeTickService;
@@ -43,6 +45,7 @@ import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -59,6 +62,8 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
     private GoogleApiClient googleApiClient;
     private E_Sampark e_sampark;
     private AsyncRegisterGCM asyncRegisterGCM;
+    private ProgressDialog progressDialog;
+    private AsyncLoadMasterData asyncLoadMasterData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,17 +73,26 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         e_sampark = (E_Sampark) getApplicationContext();
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
         setSupportActionBar(toolbar);
-
         Crittercism.initialize(getApplicationContext(), "9a9c1f48ff544897b9dc51f0edab21de00555300");
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         this.getSupportActionBar().setDisplayShowCustomEnabled(true);
-        //this.getSupportActionBar().setCustomView(R.layout.home_actionbar);
         this.getSupportActionBar().setDisplayShowHomeEnabled(false);
         this.getSupportActionBar().setDisplayShowTitleEnabled(false);
         this.getSupportActionBar().setDisplayUseLogoEnabled(false);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         this.getSupportActionBar().setIcon(android.R.color.transparent);
         prefs = e_sampark.getSharedPreferences();
+//        init();
+        if (e_sampark.getSharedPreferences().getBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, true)) {
+            asyncLoadMasterData = new AsyncLoadMasterData();
+            asyncLoadMasterData.execute();
+        } else {
+            init();
+        }
+
+    }
+
+    private void init() {
         //get distance in meter for checkin location
         Intent checkinintent = new Intent(SymphonyHome.this, GetCheckInMeterService.class);
         startService(checkinintent);
@@ -109,7 +123,6 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
             Intent intent = new Intent(SymphonyHome.this, TimeTickService.class);
             startService(intent);
         }
-
     }
 
     private void loadData() {
@@ -318,6 +331,36 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP,
                     calendar.getTimeInMillis(), alramPendingIntent);
+        }
+    }
+
+
+    private class AsyncLoadMasterData extends AsyncTask<String, Void, ArrayList<MasterDataModel>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = SymphonyUtils.displayProgressDialog(SymphonyHome.this);
+        }
+
+        @Override
+        protected ArrayList<MasterDataModel> doInBackground(String... strings) {
+            WSGetMasterData wsGetMasterData = new WSGetMasterData();
+            return wsGetMasterData.executeTown(e_sampark.getSharedPreferences().getString(Const.PREF_LAST_DATETIME, ""), SymphonyHome.this);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<MasterDataModel> masterDataModels) {
+            super.onPostExecute(masterDataModels);
+
+
+            if (masterDataModels != null && masterDataModels.size() > 0) {
+                e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
+                e_sampark.getSharedPreferences().edit().putString(Const.PREF_LAST_DATETIME, SymphonyUtils.getCurrentDataTime()).commit();
+                e_sampark.getSharedPreferences().edit().putBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, false).commit();
+            }
+            SymphonyUtils.dismissProgressDialog(progressDialog);
+            init();
+
         }
     }
 
