@@ -113,36 +113,37 @@ public class DBProvider extends ContentProvider {
         switch (match) {
 
             case DB.DELETE_DISTRIBUTER:
-
+                openDatabase();
                 count = mDB.delete(DB.DISTRIBUTER, selection, selectionArgs);
 
 
                 break;
 
             case DB.DELETE_DISTRIBUTER_ID:
-
+                openDatabase();
                 count = mDB.delete(DB.DISTRIBUTER, selection, selectionArgs);
 
                 break;
             case DB.DELETE_CHEKINOUT_BY_ID:
-
+                openDatabase();
                 count = mDB.delete(DB.CHECK, selection, selectionArgs);
 
                 break;
             case DB.DELETE_DISTRIBUTER_METADATA:
             case DB.DELETE_DISTRIBUTER_REPORT_DATA:
-
+                openDatabase();
                 count = mDB.delete(DB.DISTRIBUTER_META_DATA, selection, selectionArgs);
 
                 break;
 
             case DB.DELETE_CHECK_REPORT_DATA:
-
+                openDatabase();
                 count = mDB.delete(DB.CHECK, selection, selectionArgs);
 
                 break;
 
             case DB.DELETE_NOTIFICATION_REPORT_DATA:
+                openDatabase();
                 count = mDB.delete(DB.NOTIFICATION, selection, selectionArgs);
 
                 break;
@@ -183,7 +184,7 @@ public class DBProvider extends ContentProvider {
 
             // add distributor
             case DB.ADD_DISTRIBUTER: {
-
+                openDatabase();
                 long rowID = mDB.insert(DB.DISTRIBUTER, null, values);
                 if (rowID > 0) {
 
@@ -198,7 +199,7 @@ public class DBProvider extends ContentProvider {
 
             case DB.ADD_CHECK_STATUS: {
 
-
+                openDatabase();
                 long rowID = mDB.insert(DB.CHECK, null, values);
                 if (rowID > 0) {
 
@@ -214,7 +215,7 @@ public class DBProvider extends ContentProvider {
             }
 
             case DB.ADD_DISTRIBUTER_META_DATA: {
-
+                openDatabase();
 
                 long rowID = mDB.insert(DB.DISTRIBUTER_META_DATA, null, values);
 
@@ -231,7 +232,7 @@ public class DBProvider extends ContentProvider {
 
             }
             case DB.ADD_USER: {
-
+                openDatabase();
                 long rowID = mDB.insert(DB.USER, null, values);
 
 
@@ -247,7 +248,7 @@ public class DBProvider extends ContentProvider {
 
             }
             case DB.ADD_NOTIFICATION: {
-
+                openDatabase();
                 long rowID = mDB.insert(DB.NOTIFICATION, null, values);
 
 
@@ -282,9 +283,16 @@ public class DBProvider extends ContentProvider {
         SQLiteDatabase.loadLibs(getContext());
         mDBHelper = new SymphonyDB(getContext());
         mDB = mDBHelper.getWritableDatabase(DB.DATABASE_STRING);
-        e_sampark=(E_Sampark)getContext();
+        e_sampark = (E_Sampark) getContext();
         e_sampark.setSymphonyDB(mDBHelper);
         return (mDBHelper == null ? false : true);
+    }
+
+    private void openDatabase() {
+        if (mDB == null || !mDB.isOpen()) {
+            mDB = mDBHelper.getWritableDatabase(DB.DATABASE_STRING);
+        }
+
     }
 
     @Override
@@ -334,7 +342,7 @@ public class DBProvider extends ContentProvider {
                 break;
 
             case DB.LIST_DISTRIBUTER_VIEW_DATA:
-
+                openDatabase();
                 queryBuilder.setTables(DB.DISTRIBUTER_META_VIEW);
                 //	sortOrder = "datetime("+DB.DIST_TIMESTAMP+") DESC ";
                 //	sortOrder = DB.DIST_META_KEY + " DESC ";
@@ -343,7 +351,6 @@ public class DBProvider extends ContentProvider {
                 break;
 
             case DB.LIST_NOTIFICATION:
-
                 queryBuilder.setTables(DB.NOTIFICATION);
                 sortOrder = DB.NOTIFICATION_ID + " DESC ";
 
@@ -356,7 +363,7 @@ public class DBProvider extends ContentProvider {
         //    orderBy =  TextUtils.isEmpty(sortOrder) ?   DB.DIST_NAME :  sortOrder;
 
         orderBy = TextUtils.isEmpty(sortOrder) ? null : sortOrder;
-
+        openDatabase();
         Cursor cursor = queryBuilder.query(mDB,
                 projection,
                 selection,
@@ -388,6 +395,7 @@ public class DBProvider extends ContentProvider {
 
             case DB.UPDATE_DISTRIBUTER_METADATA: {
 
+                openDatabase();
                 int rowsUpdated = mDB.update(DB.DISTRIBUTER_META_DATA, values, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, null);
 
@@ -396,7 +404,7 @@ public class DBProvider extends ContentProvider {
 
 
             case DB.UPDATE_CHECK_STATUS: {
-
+                openDatabase();
                 int rowsUpdated = mDB.update(DB.CHECK, values, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, contentObserver);
                 Log.e("DBProvider ", "update " + uri);
@@ -406,7 +414,7 @@ public class DBProvider extends ContentProvider {
 
             case DB.UPDATE_DISTRIBUTER_DATA: {
 
-
+                openDatabase();
                 int rowsUpdated = mDB.update(DB.DISTRIBUTER, values, whereClause, whereArgs);
                 getContext().getContentResolver().notifyChange(uri, contentObserver);
 
