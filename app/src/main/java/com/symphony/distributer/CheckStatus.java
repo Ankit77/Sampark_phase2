@@ -52,8 +52,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     private SharedPreferences.Editor editor;
     //    private LocationFailedReceiver locationFailedReceiver;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
-    // private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
+   // private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
+     private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
     private E_Sampark e_sampark;
     private ProgressDialog progressDialog;
     private FloatingActionButton fbSyncMasterData;

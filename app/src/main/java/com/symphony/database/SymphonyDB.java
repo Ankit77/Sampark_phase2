@@ -44,7 +44,9 @@ public class SymphonyDB extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqldb, int arg1, int arg2) {
         // TODO Auto-generated method stub
-
+        if (arg1 > arg2) {
+            sqldb.execSQL("ALTER TABLE " + DB.CHECK + " ADD COLUMN " + DB.CHECK_DEALERLETLONGID);
+        }
         onCreate(sqldb);
 
     }
@@ -112,7 +114,7 @@ public class SymphonyDB extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<MasterDataModel> getAllSyncedVisit() {
+    public ArrayList<MasterDataModel> getMasterDataList() {
         final ArrayList<MasterDataModel> visitList = new ArrayList<MasterDataModel>();
         openDataBase();
         Cursor cursor = null;
@@ -125,7 +127,12 @@ public class SymphonyDB extends SQLiteOpenHelper {
                 for (int i = 0; i < cursor.getCount(); i++) {
                     model = new MasterDataModel();
                     model.setDealerenrolmentid(cursor.getString(cursor.getColumnIndex(DB.COLUME_MASTER_DEALERENROLMENT_ID)));
-
+                    model.setDealerletlongid(cursor.getString(cursor.getColumnIndex(DB.COLUME_MASTER_DEALERLETLONG_ID)));
+                    model.setName(cursor.getString(cursor.getColumnIndex(DB.COLUME_MASTER_NAME)));
+                    model.setAddr(cursor.getString(cursor.getColumnIndex(DB.COLUME_MASTER_ADDR)));
+                    model.setLat(cursor.getString(cursor.getColumnIndex(DB.COLUME_MASTER_LAT)));
+                    model.setLang(cursor.getString(cursor.getColumnIndex(DB.COLUME_MASTER_LANG)));
+                    model.setCreated_on(cursor.getString(cursor.getColumnIndex(DB.COLUME_MASTER_CREATED_ON)));
                     visitList.add(model);
                     cursor.moveToNext();
                 }

@@ -133,7 +133,7 @@ public class HttpManager {
 
     }
 
-    public void sendCheckStatus(String smsBody, String id, HttpStatusListener listener) {
+    public void sendCheckStatus(String smsBody, String dealerLatlongId, String id, HttpStatusListener listener) {
         if (smsBody != null) {
 
             if (httpStatusListener != null)
@@ -141,13 +141,13 @@ public class HttpManager {
             String smsArry[] = smsBody.split(",");
             //Log.e("sendCheckStatus" , smsArry.length + " " +smsBody);
             if (smsArry.length == 6) {
-                HTTP_CHECK_URL = HTTP_ENDPOINT + "/MobilecheckIN_OUT_new.asp?user=track_new&pass=track123" +
+                HTTP_CHECK_URL = HTTP_ENDPOINT + "/eSamparkcheckIN_OUT.asp?user=track_new&pass=track123" +
                         "&Label=" + smsArry[0] +
                         "&mno=" + smsArry[1] +
                         "&Lat=" + smsArry[2] +
                         "&Long=" + smsArry[3] +
                         "&Timestamp=" + smsArry[4] +
-                        "&v=" + smsArry[5];
+                        "&v=" + smsArry[5] + "&authtoken=" + e_sampark.getSharedPreferences().getString(Const.PREF_AUTH_TOKEN, "") + "&DealerLETLONGID=" + dealerLatlongId;
                 WriteLog.E("URL", HTTP_CHECK_URL);
                 new FireHttpRequest().execute(HTTP_CHECK_URL, HTTP_CHECK_STATUS, smsBody, id);
             }
