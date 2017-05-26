@@ -302,117 +302,96 @@ public class SMSService extends Service implements LocationListener {
                             WriteLog.E(SMSService.class.getSimpleName(), "Distance = " + distanceInMeters);
                         }
                     }
+
                     //sorting array for getting close distance
                     Collections.sort(closestDistanceList);
-                    masterDataModel = hasmapList.get(closestDistanceList.get(0));
-                    if (masterDataModel != null)
-                        WriteLog.E(SMSService.class.getSimpleName(), masterDataModel.getName());
+
+
                 }
+                if (closestDistanceList.size() > 0 && hasmapList.size() > 0) {
+                    masterDataModel = hasmapList.get(closestDistanceList.get(0));
+                    if (masterDataModel != null) {
+                        String checkTime[] = smsBody.split(",");
+                        timeStamp = params[3];
+                        ContentValues checkStatusValue = new ContentValues();
+                        checkStatusValue.put(DB.CHECK_SMS, smsBody);
+                        checkStatusValue.put(DB.CHECK_TIMESTAMP, timeStamp);
+                        if (distKey != null)
+                            checkStatusValue.put(DB.DIST_CHECK_KEY, distKey);
 
-                if (masterDataModel != null) {
-                    String checkTime[] = smsBody.split(",");
-                    timeStamp = params[3];
-                    ContentValues checkStatusValue = new ContentValues();
-                    checkStatusValue.put(DB.CHECK_SMS, smsBody);
-                    checkStatusValue.put(DB.CHECK_TIMESTAMP, timeStamp);
-                    if (distKey != null)
-                        checkStatusValue.put(DB.DIST_CHECK_KEY, distKey);
+                        if (checkStatus != null)
+                            checkStatusValue.put(DB.CHECK_STATUS, checkStatus);
 
-                    if (checkStatus != null)
-                        checkStatusValue.put(DB.CHECK_STATUS, checkStatus);
-
-                    checkStatusValue.put(DB.CHECK_FLAG, 1);
-                    checkStatusValue.put(DB.CHECK_DEALERLETLONGID, masterDataModel.getDealerletlongid());
-                    final Uri insert = getBaseContext().getContentResolver().insert(Uri.parse("content://com.symphony.database.DBProvider/addCheckStatus"),
-                            checkStatusValue);
-                    Log.e("SMSService", "sending on webservice update this id ->>>> " + insert.getLastPathSegment());
+                        checkStatusValue.put(DB.CHECK_FLAG, 1);
+                        checkStatusValue.put(DB.CHECK_DEALERLETLONGID, masterDataModel.getDealerletlongid());
+                        final Uri insert = getBaseContext().getContentResolver().insert(Uri.parse("content://com.symphony.database.DBProvider/addCheckStatus"),
+                                checkStatusValue);
+                        Log.e("SMSService", "sending on webservice update this id ->>>> " + insert.getLastPathSegment());
 
 
-                    httpManger = new HttpManager(SMSService.this);
-                    httpManger.sendCheckStatus(smsBody, masterDataModel.getDealerletlongid(), insert.getLastPathSegment(), new HttpStatusListener() {
-                        CheckData checkData = new CheckData();
+                        httpManger = new HttpManager(SMSService.this);
+                        httpManger.sendCheckStatus(smsBody, masterDataModel.getDealerletlongid(), insert.getLastPathSegment(), new HttpStatusListener() {
+                            CheckData checkData = new CheckData();
 
-                        @Override
-                        public void onVerifyStatus(Boolean status) {
-                            // TODO Auto-generated method stub
-                            Log.e(SMSService.class.getSimpleName(), "onVerifyStatus");
+                            @Override
+                            public void onVerifyStatus(Boolean status) {
+                                // TODO Auto-generated method stub
+                                Log.e(SMSService.class.getSimpleName(), "onVerifyStatus");
 
+                            }
+
+                            @Override
+                            public void onDistributerListLoad(Boolean status) {
+                                // TODO Auto-generated method stub
+                                Log.e(SMSService.class.getSimpleName(), "onDistributerListLoad");
+                            }
+
+                            @Override
+                            public void onVerifyMobileStatus(Boolean status) {
+                                // TODO Auto-generated method stub
+                                Log.e(SMSService.class.getSimpleName(), "onVerifyMobileStatus");
+                            }
+
+                            @Override
+                            public void onCheckStatus(CheckData checkData) {
+                                // TODO Auto-generated method stub
+                                this.checkData = checkData;
+                                checkData.setCheckId(insert.getLastPathSegment());
+                                checkData.setCheckFlag(false);
+                                updateCheckFlag(checkData);
+                            }
+
+                            @Override
+                            public void onTimeOut() {
+                                // TODO Auto-generated method stub
+                                WriteLog.E("", "");
+                                checkData.setCheckId(insert.getLastPathSegment());
+                                checkData.setCheckStatus(false);
+                                checkData.setCheckFlag(true);
+                                updateCheckFlag(checkData);
+                            }
+
+                            @Override
+                            public void onNetworkDisconnect() {
+                                WriteLog.E("", "");
+                                // TODO Auto-generated method stub
+                                checkData.setCheckId(insert.getLastPathSegment());
+                                checkData.setCheckStatus(false);
+                                checkData.setCheckFlag(true);
+                                updateCheckFlag(checkData);
+                            }
+                        });
+                    } else {
+                        e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
+                        if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
+                            e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
+                        } else {
+                            e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
                         }
-
-                        @Override
-                        public void onDistributerListLoad(Boolean status) {
-                            // TODO Auto-generated method stub
-                            Log.e(SMSService.class.getSimpleName(), "onDistributerListLoad");
-                        }
-
-                        @Override
-                        public void onVerifyMobileStatus(Boolean status) {
-                            // TODO Auto-generated method stub
-                            Log.e(SMSService.class.getSimpleName(), "onVerifyMobileStatus");
-                        }
-
-                        @Override
-                        public void onCheckStatus(CheckData checkData) {
-                            // TODO Auto-generated method stub
-                            this.checkData = checkData;
-                            checkData.setCheckId(insert.getLastPathSegment());
-                            checkData.setCheckFlag(false);
-//                            if (checkData.isCheckStatus()) {
-//                                checkData.setCheckFlag(false);
-//                            } else {
-//                                checkData.setCheckFlag(true);
-//                            }
-                            updateCheckFlag(checkData);
-                        }
-
-                        @Override
-                        public void onTimeOut() {
-                            // TODO Auto-generated method stub
-                            WriteLog.E("", "");
-                            checkData.setCheckId(insert.getLastPathSegment());
-                            checkData.setCheckStatus(false);
-                            checkData.setCheckFlag(true);
-                            updateCheckFlag(checkData);
-//                            int count = getBaseContext().getContentResolver()
-//                                    .delete(Uri.parse("content://com.symphony.database.DBProvider/deletecheckinoutById"),
-//                                            DB.CHECK_ID + " = '" + checkData.getCheckId() + "'",
-//                                            null);
-//                            e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
-//                            if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
-//                                e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
-//                            } else {
-//                                e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
-//                            }
-//                            Intent intent = new Intent();
-//                            intent.setAction("com.symphony.CHECKINOUTFAIL");
-//                            sendBroadcast(intent);
-                        }
-
-                        @Override
-                        public void onNetworkDisconnect() {
-                            WriteLog.E("", "");
-                            // TODO Auto-generated method stub
-                            checkData.setCheckId(insert.getLastPathSegment());
-                            checkData.setCheckStatus(false);
-                            checkData.setCheckFlag(true);
-                            updateCheckFlag(checkData);
-//                            if (isNetworkAvailable()) {
-//                                int count = getBaseContext().getContentResolver()
-//                                        .delete(Uri.parse("content://com.symphony.database.DBProvider/deletecheckinoutById"),
-//                                                DB.CHECK_ID + " = '" + checkData.getCheckId() + "'",
-//                                                null);
-//                                e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
-//                                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
-//                                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
-//                                } else {
-//                                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
-//                                }
-//                                Intent intent = new Intent();
-//                                intent.setAction("com.symphony.CHECKINOUTFAIL");
-//                                sendBroadcast(intent);
-//                            }
-                        }
-                    });
+                        Intent intent = new Intent();
+                        intent.setAction("com.symphony.CHECKINOUTFAIL");
+                        sendBroadcast(intent);
+                    }
                 } else {
                     e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
                     if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
@@ -424,6 +403,7 @@ public class SMSService extends Service implements LocationListener {
                     intent.setAction("com.symphony.CHECKINOUTFAIL");
                     sendBroadcast(intent);
                 }
+
             } else {
 
                 e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
