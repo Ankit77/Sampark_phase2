@@ -3,6 +3,7 @@ package com.symphony.http;
 import android.content.Context;
 
 import com.symphony.E_Sampark;
+import com.symphony.utils.Const;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -70,7 +71,7 @@ public class WSGetMeter {
                         break;
                     case XmlPullParser.END_TAG:
                         if (tagname.equalsIgnoreCase("Meter")) {
-                            //e_sampark.getSharedPreferences().edit().putInt(Const.PREF_CHECKIN_METER, Integer.parseInt(text));
+                            e_sampark.getSharedPreferences().edit().putInt(Const.PREF_CHECKIN_METER, Integer.parseInt(text));
                         }
                         break;
                     default:
