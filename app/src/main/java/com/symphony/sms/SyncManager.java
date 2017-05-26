@@ -295,7 +295,8 @@ public class SyncManager extends IntentService {
                 DB.CHECK_LAT,
                 DB.CHECK_LNG,
                 DB.DIST_CHECK_NAME,
-                DB.CHECK_TIMESTAMP
+                DB.CHECK_TIMESTAMP,
+                DB.CHECK_DEALERLETLONGID
 
         };
 
@@ -485,7 +486,7 @@ public class SyncManager extends IntentService {
             Cursor curCheck = getBaseContext().getContentResolver().
                     query(Uri.parse("content://com.symphony.database.DBProvider/getCheckData"),
                             SyncManager.CHECK_DATA.PROJECTION,
-                            DB.CHECK_FLAG + " = 1",
+                            DB.CHECK_STATUS + " = 0",
                             null,
                             null);
 
@@ -497,8 +498,9 @@ public class SyncManager extends IntentService {
 
                     String smsBody = curCheck.getString(curCheck.getColumnIndex(DB.CHECK_SMS));
                     final int checkId = curCheck.getInt(curCheck.getColumnIndex(DB.CHECK_ID));
+                    String dealerLatlongId = curCheck.getString(curCheck.getColumnIndex(DB.CHECK_DEALERLETLONGID));
 
-                    sendCheckStatusData(smsBody, String.valueOf(checkId));
+                    sendCheckStatusData(smsBody, dealerLatlongId, String.valueOf(checkId));
 
                 }
 
@@ -544,10 +546,10 @@ public class SyncManager extends IntentService {
     }
 
 
-    private void sendCheckStatusData(String smsBody, final String checkId) {
+    private void sendCheckStatusData(String smsBody, String dealerletlongid, final String checkId) {
 
         HttpManager httpManger = new HttpManager(SyncManager.this);
-        httpManger.sendCheckStatus(smsBody, checkId, new HttpStatusListener() {
+        httpManger.sendCheckStatus(smsBody, dealerletlongid, checkId, new HttpStatusListener() {
 
             CheckData checkData = new CheckData();
 
@@ -581,7 +583,11 @@ public class SyncManager extends IntentService {
                 checkData.setCheckStatus(checkData.isCheckStatus());
                 checkData.setCheckFlag(false);
 
-
+//                if (checkData.isCheckStatus()) {
+//                    checkData.setCheckFlag(false);
+//                } else {
+//                    checkData.setCheckFlag(true);
+//                }
                 //insertCheckFlag(checkData);
 
                 // check in or check out sent status

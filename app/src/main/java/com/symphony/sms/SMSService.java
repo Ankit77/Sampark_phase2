@@ -278,7 +278,6 @@ public class SMSService extends Service implements LocationListener {
 
             if (smsBody != null) {
 
-
                 /**
                  * Algoridham for finding closest branch from check in location
                  */
@@ -358,77 +357,84 @@ public class SMSService extends Service implements LocationListener {
                             this.checkData = checkData;
                             checkData.setCheckId(insert.getLastPathSegment());
                             checkData.setCheckFlag(false);
-                            if (checkData.isCheckStatus()) {
-                                updateCheckFlag(checkData);
-                            } else {
-                                int count = getBaseContext().getContentResolver()
-                                        .delete(Uri.parse("content://com.symphony.database.DBProvider/deletecheckinoutById"),
-                                                DB.CHECK_ID + " = '" + checkData.getCheckId() + "'",
-                                                null);
-                                e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
-                                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
-                                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
-                                } else {
-                                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
-                                }
-                                Intent intent = new Intent();
-                                intent.setAction("com.symphony.CHECKINOUTFAIL");
-                                sendBroadcast(intent);
-                            }
-
+//                            if (checkData.isCheckStatus()) {
+//                                checkData.setCheckFlag(false);
+//                            } else {
+//                                checkData.setCheckFlag(true);
+//                            }
+                            updateCheckFlag(checkData);
                         }
 
                         @Override
                         public void onTimeOut() {
                             // TODO Auto-generated method stub
+                            WriteLog.E("", "");
                             checkData.setCheckId(insert.getLastPathSegment());
                             checkData.setCheckStatus(false);
                             checkData.setCheckFlag(true);
                             updateCheckFlag(checkData);
-                            int count = getBaseContext().getContentResolver()
-                                    .delete(Uri.parse("content://com.symphony.database.DBProvider/deletecheckinoutById"),
-                                            DB.CHECK_ID + " = '" + checkData.getCheckId() + "'",
-                                            null);
-                            e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
-                            if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
-                                e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
-                            } else {
-                                e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
-                            }
-                            Intent intent = new Intent();
-                            intent.setAction("com.symphony.CHECKINOUTFAIL");
-                            sendBroadcast(intent);
+//                            int count = getBaseContext().getContentResolver()
+//                                    .delete(Uri.parse("content://com.symphony.database.DBProvider/deletecheckinoutById"),
+//                                            DB.CHECK_ID + " = '" + checkData.getCheckId() + "'",
+//                                            null);
+//                            e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
+//                            if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
+//                                e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
+//                            } else {
+//                                e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
+//                            }
+//                            Intent intent = new Intent();
+//                            intent.setAction("com.symphony.CHECKINOUTFAIL");
+//                            sendBroadcast(intent);
                         }
 
                         @Override
                         public void onNetworkDisconnect() {
+                            WriteLog.E("", "");
                             // TODO Auto-generated method stub
                             checkData.setCheckId(insert.getLastPathSegment());
                             checkData.setCheckStatus(false);
                             checkData.setCheckFlag(true);
                             updateCheckFlag(checkData);
-                            if (isNetworkAvailable()) {
-                                int count = getBaseContext().getContentResolver()
-                                        .delete(Uri.parse("content://com.symphony.database.DBProvider/deletecheckinoutById"),
-                                                DB.CHECK_ID + " = '" + checkData.getCheckId() + "'",
-                                                null);
-                                e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
-                                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
-                                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
-                                } else {
-                                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
-                                }
-                                Intent intent = new Intent();
-                                intent.setAction("com.symphony.CHECKINOUTFAIL");
-                                sendBroadcast(intent);
-                            }
+//                            if (isNetworkAvailable()) {
+//                                int count = getBaseContext().getContentResolver()
+//                                        .delete(Uri.parse("content://com.symphony.database.DBProvider/deletecheckinoutById"),
+//                                                DB.CHECK_ID + " = '" + checkData.getCheckId() + "'",
+//                                                null);
+//                                e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
+//                                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
+//                                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
+//                                } else {
+//                                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
+//                                }
+//                                Intent intent = new Intent();
+//                                intent.setAction("com.symphony.CHECKINOUTFAIL");
+//                                sendBroadcast(intent);
+//                            }
                         }
                     });
+                } else {
+                    e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
+                    if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
+                        e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
+                    } else {
+                        e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
+                    }
+                    Intent intent = new Intent();
+                    intent.setAction("com.symphony.CHECKINOUTFAIL");
+                    sendBroadcast(intent);
                 }
-            }else
-            {
+            } else {
 
-
+                e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
+                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
+                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
+                } else {
+                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
+                }
+                Intent intent = new Intent();
+                intent.setAction("com.symphony.CHECKINOUTFAIL");
+                sendBroadcast(intent);
 
             }
             return null;
