@@ -2,7 +2,9 @@ package com.symphony.http;
 
 import android.content.Context;
 
+import com.symphony.E_Sampark;
 import com.symphony.model.MasterDataModel;
+import com.symphony.utils.Const;
 import com.symphony.utils.WriteLog;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -22,9 +24,10 @@ import java.util.ArrayList;
  */
 
 public class WSGetMasterData {
-
+    private E_Sampark e_sampark;
 
     public ArrayList<MasterDataModel> executeTown(String lastdattime, Context context) {
+        e_sampark = (E_Sampark) context.getApplicationContext();
         String murl = "http://61.12.85.74:800/eSampark_Masterdata.asp?NM=track_new&PASS=track123&xMNO=9374146578&lastdate=" + lastdattime;
         WriteLog.E("URL", murl);
         URL url = null;
@@ -70,7 +73,9 @@ public class WSGetMasterData {
                         text = parser.getText();
                         break;
                     case XmlPullParser.END_TAG:
-                        if (tagname.equalsIgnoreCase("DealerLETLONGID")) {
+                        if (tagname.equalsIgnoreCase("created_date")) {
+                            e_sampark.getSharedPreferences_masterdata().edit().putString(Const.PREF_LAST_DATETIME, text).commit();
+                        } else if (tagname.equalsIgnoreCase("DealerLETLONGID")) {
                             masterDataModel.setDealerletlongid(text);
                         } else if (tagname.equalsIgnoreCase("DealerEnrolmentID")) {
                             masterDataModel.setDealerenrolmentid(text);

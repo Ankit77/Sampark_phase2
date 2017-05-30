@@ -52,8 +52,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     private SharedPreferences.Editor editor;
     //    private LocationFailedReceiver locationFailedReceiver;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-   // private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
-     private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
+    // private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
+    private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
     private E_Sampark e_sampark;
     private ProgressDialog progressDialog;
     private FloatingActionButton fbSyncMasterData;
@@ -389,7 +389,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected ArrayList<MasterDataModel> doInBackground(String... strings) {
             WSGetMasterData wsGetMasterData = new WSGetMasterData();
-            return wsGetMasterData.executeTown(e_sampark.getSharedPreferences().getString(Const.PREF_LAST_DATETIME, ""), getActivity());
+            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), getActivity());
         }
 
         @Override
@@ -398,7 +398,6 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
 
             if (masterDataModels != null && masterDataModels.size() > 0) {
                 e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
-                e_sampark.getSharedPreferences().edit().putString(Const.PREF_LAST_DATETIME, SymphonyUtils.getCurrentDataTime()).commit();
             }
             asyncGetDeletedMasterData = new AsyncGetDeletedMasterData();
             asyncGetDeletedMasterData.execute();
@@ -414,7 +413,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected ArrayList<String> doInBackground(Void... voids) {
             WSGetDeletedMasterData wsGetDeletedMasterData = new WSGetDeletedMasterData();
-            return wsGetDeletedMasterData.executeTown(e_sampark.getSharedPreferences().getString(Const.PREF_LAST_DATETIME, ""), getActivity());
+            return wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), getActivity());
         }
 
         @Override

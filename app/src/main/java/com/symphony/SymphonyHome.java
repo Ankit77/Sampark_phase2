@@ -345,7 +345,7 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         @Override
         protected ArrayList<MasterDataModel> doInBackground(String... strings) {
             WSGetMasterData wsGetMasterData = new WSGetMasterData();
-            return wsGetMasterData.executeTown(e_sampark.getSharedPreferences().getString(Const.PREF_LAST_DATETIME, ""), SymphonyHome.this);
+            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), SymphonyHome.this);
         }
 
         @Override
@@ -355,8 +355,7 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
 
             if (masterDataModels != null && masterDataModels.size() > 0) {
                 e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
-                e_sampark.getSharedPreferences().edit().putString(Const.PREF_LAST_DATETIME, SymphonyUtils.getCurrentDataTime()).commit();
-                e_sampark.getSharedPreferences().edit().putBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, false).commit();
+                e_sampark.getSharedPreferences_masterdata().edit().putBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, false).commit();
             }
             SymphonyUtils.dismissProgressDialog(progressDialog);
             init();

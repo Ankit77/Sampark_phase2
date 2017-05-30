@@ -14,6 +14,7 @@ import com.symphony.receiver.MyService;
 public class E_Sampark extends Application {
 
     private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences_masterdata;
 
     public void setSymphonyDB(SymphonyDB symphonyDB) {
         this.symphonyDB = symphonyDB;
@@ -27,6 +28,7 @@ public class E_Sampark extends Application {
     public void onCreate() {
         super.onCreate();
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+        sharedPreferences_masterdata = getSharedPreferences("masterData", Context.MODE_PRIVATE);
 //        symphonyDB = new SymphonyDB(getApplicationContext());
 ////        symphonyDB.openDataBase();
         Intent intentLocationService = new Intent(getApplicationContext(), MyService.class);
@@ -49,6 +51,11 @@ public class E_Sampark extends Application {
 //        alarmManager.set(AlarmManager.RTC_WAKEUP, diff,
 //                pendingIntent);
 //    }
+
+
+    public SharedPreferences getSharedPreferences_masterdata() {
+        return sharedPreferences_masterdata;
+    }
 
 
     public SymphonyDB getSymphonyDB() {
@@ -103,8 +110,6 @@ public class E_Sampark extends Application {
 //                calendar.getTimeInMillis(),
 //                Const.WIPEDATA_INTERVAL, alramPendingIntent);
 //    }
-
-
 
 
 }

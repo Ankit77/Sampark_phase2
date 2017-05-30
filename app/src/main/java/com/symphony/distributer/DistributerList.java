@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -50,7 +51,6 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
     private ListView distributerList;
     private DistributerAdapter distributerAdapter;
     private SearchView searchView;
-    private Cursor searchCursor;
     private static String searchTerm;
     private DistributerActivityListener mDistributerListener;
     private ProgressDialog mProgressBar;
@@ -65,10 +65,6 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
     class DeleteAllDistributer extends ContentObserver {
         public DeleteAllDistributer(Handler h) {
             super(h);
-        }
-
-        public void onChange(boolean selfChange) {
-            Toast.makeText(getActivity(), "Contact observer: content changed", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -114,43 +110,6 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
         mProgressBar.hide();
         mProgressBar.setCanceledOnTouchOutside(false);
         mProgressBar.setCancelable(false);
-            /*searchView = (EditText) getActivity().findViewById(R.id.mainSearch);
-
-			searchView.addTextChangedListener(new TextWatcher(){
-
-				@Override
-				public void afterTextChanged(Editable s) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void beforeTextChanged(CharSequence s, int start,
-						int count, int after) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onTextChanged(CharSequence s, int start,
-						int before, int count) {
-					// TODO Auto-generated method stub
-					
-					
-					//distributerAdapter.getFilter().filter(s);
-					
-
-					searchTerm = s.toString() ;
-					getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
-							DistributerList.this);
-				}
-				
-				
-				
-			});*/
-        //	searchView.setOnQueryTextListener(this);
-        //	searchView.setSubmitButtonEnabled(true);
-        //	searchView.setIconified(true);
 
         mDistributerListener = (DistributerActivityListener) getActivity();
         emptyView = new TextView(getActivity());
@@ -159,7 +118,6 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
         if (emptyView != null) {
             emptyView.setVisibility(View.GONE);
         }
-        //	View emptyView =  getActivity().findViewById();
         distributerAdapter = new DistributerAdapter(getActivity(),
                 R.layout.distributer_list,
                 null,
@@ -184,17 +142,13 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
                 bundle.putString("distaddr", cur.getString(cur.getColumnIndex(DB.DIST_ADDRESS)));
                 bundle.putString("distid", cur.getString(cur.getColumnIndex(DB.DIST_ID)));
                 bundle.putString("distkey", cur.getString(cur.getColumnIndex(DB.DIST_KEY)));
-                mDistributerListener.onDistributerListItemSelect(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                DistributerInfo distInfoFrag = new DistributerInfo();
+                distInfoFrag.setArguments(bundle);
+                ft.replace(R.id.distHome, distInfoFrag).addToBackStack("distinfo").hide(DistributerList.this).commit();
 
-					/*Intent intent = new Intent(DistributerList.this ,DistributerInfo.class);
-                    intent.putExtra("distname",  cur.getString(cur.getColumnIndex(DB.DIST_NAME)));
-					intent.putExtra("distaddr",  cur.getString(cur.getColumnIndex(DB.DIST_ADDRESS)));
-					intent.putExtra("distcontactname",  cur.getString(cur.getColumnIndex(DB.DIST_CONTACT_PERSON)));					
-					startActivity(intent); */
+//                mDistributerListener.onDistributerListItemSelect(bundle);
 
-                //	Log.e("DISTRIBUTER NAME " , cur.getString(cur.getColumnIndex(DB.DIST_NAME))+"");
-                //	Log.e("DISTRIBUTER KEY " , cur.getString(cur.getColumnIndex(DB.DIST_KEY))+"");
-                //	Log.e("DISTRIBUTER ID " , cur.getString(cur.getColumnIndex(DB.DIST_ID))+"");
             }
 
 
@@ -202,46 +156,11 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
 
         distributerList.setTextFilterEnabled(true);
 
-			/*distributerAdapter.setFilterQueryProvider(new FilterQueryProvider(){
 
-				@Override
-				public Cursor runQuery(CharSequence constraint) {
-					// TODO Auto-generated method stub
-					
-					Log.e("requery" , constraint+"");
-					
-					// Uri reQuery = Uri.withAppendedPath(DB.SALES_URI, Uri.encode(constraint));
-				
-					//if(searchCursor !=null) {
-						
-						
-						//if(searchCursor.isClosed()) {
-						
-						if(!TextUtils.isEmpty(constraint)){
-							searchTerm = constraint.toString();
-							searchCursor =  getActivity().getBaseContext().getContentResolver().
-								query(	Uri.parse("content://com.symphony.database.DBProvider/getDistributerByName"),
-								DISTRIBUTER_INFO.PROJECTION, DB.DIST_NAME + " LIKE '"+ constraint+"%'", null, null);
-						}
-						
-						//}
-							 
-				//	}
-					return searchCursor;
-					
-					
-				}
-				
-				
-			});*/
-
-        //Log.e("Search Term" , DistributerInfo.isDeleted +  " "  +searchTerm+" " +distributerAdapter.getCount());
         if (searchTerm == null || searchTerm == "" || DistributerInfo.isDeleted == true) {
             getActivity().getSupportLoaderManager().initLoader(DISTRIBUTER_INFO.ID, null, DistributerList.this);
         } else {
             getActivity().getSupportLoaderManager().initLoader(DISTRIBUTER_INFO.ID, null, DistributerList.this);
-            //searchView.setText(searchTerm);
-            //distributerAdapter.getFilter().filter(searchTerm);
         }
 
     }
@@ -261,7 +180,6 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
                     Toast.makeText(getActivity(), "Network not available at this moment", Toast.LENGTH_SHORT).show();
                 } else {
                     int count = getActivity().getBaseContext().getContentResolver().delete(Uri.parse("content://com.symphony.database.DBProvider/deleteAllDistributer"), null, null);
-                    // Log.e("REFRESH pressed" , count+"");
                     getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
                             DistributerList.this);
                 }
@@ -315,6 +233,7 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
         private LayoutInflater inflater;
         private Cursor cur;
         private int layout;
+
         public DistributerAdapter(Context context, int layout, Cursor c,
                                   String[] from, int[] to, int flags) {
             super(context, layout, c, from, to, flags);
@@ -447,7 +366,6 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
                         // TODO Auto-generated method stub
                         mProgressBar.dismiss();
                         Toast.makeText(getActivity(), "Request Timeout occurs , please try again", Toast.LENGTH_SHORT).show();
-
                     }
 
                     @Override
@@ -455,38 +373,26 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
                         // TODO Auto-generated method stub
                         mProgressBar.dismiss();
                         Toast.makeText(getActivity(), "Network not available at this moment", Toast.LENGTH_SHORT).show();
-
                     }
 
                     @Override
                     public void onCheckStatus(CheckData checkData) {
                         // TODO Auto-generated method stub
-
                     }
-
-
                 });
 
             }
-
-
         } else {
-
             distributerAdapter.swapCursor(cursor);
         }
-
-
     }
 
 
     @Override
     public void onLoaderReset(Loader loader) {
         // TODO Auto-generated method stub
-
         distributerAdapter.swapCursor(null);
-
     }
-
 
     public interface DISTRIBUTER_INFO {
 
@@ -513,63 +419,33 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
         };
     }
 
-    public void addDistributer() {
-
-
-        ContentValues valueOne = new ContentValues();
-
-        valueOne.put(DB.DIST_NAME, "PQR Company");
-        valueOne.put(DB.DIST_CONTACT_PERSON, "John Caro");
-        valueOne.put(DB.DIST_ADDRESS, "55 club road");
-
-
-        getActivity().getBaseContext().getContentResolver().insert(Uri.parse("content://com.symphony.database.DBProvider/addDistributer"),
-
-                valueOne);
-
-
-    }
+//    public void addDistributer() {
+//
+//
+//        ContentValues valueOne = new ContentValues();
+//
+//        valueOne.put(DB.DIST_NAME, "PQR Company");
+//        valueOne.put(DB.DIST_CONTACT_PERSON, "John Caro");
+//        valueOne.put(DB.DIST_ADDRESS, "55 club road");
+//        getActivity().getBaseContext().getContentResolver().insert(Uri.parse("content://com.symphony.database.DBProvider/addDistributer"),
+//                valueOne);
+//    }
 
     @Override
     public boolean onQueryTextChange(String text) {
         // TODO Auto-generated method stub
-
-
-        //Log.e("value" , text+"");
         if (TextUtils.isEmpty(text)) {
-
             if (distributerList != null) {
                 searchTerm = "";
-                //	Toast.makeText(getActivity(), " Text empty", Toast.LENGTH_LONG).show();
                 getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
                         DistributerList.this);
-//				
-//
-//				getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
-//						DistributerList.this);
-
-//				distributerList.clearTextFilter();
-
             }
 
-
         } else {
-
-
-            //distributerList.setFilterText(text);
-            //distributerAdapter.getFilter().filter(text);
-            //distributerAdapter.notifyDataSetChanged();
-
-
             if (distributerList != null) {
-
-
                 searchTerm = text;
-
                 getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
                         DistributerList.this);
-
-
             }
 
         }
@@ -581,10 +457,6 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
     @Override
     public boolean onQueryTextSubmit(String submitText) {
         // TODO Auto-generated method stub
-
-        //Log.e("SUBMIT" , submitText+"");
-
-
         getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
                 DistributerList.this);
         return false;
@@ -594,59 +466,45 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onResume() {
         super.onResume();
-
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Customer List");
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true); // disable the button
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true); // remove the left caret
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-
     }
 
     @SuppressLint("NewApi")
     @Override
     public void onPause() {
         super.onPause();
-
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("CHECK IN/OUT");
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false); // disable the button
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false); // remove the left caret
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(false);
-
-
-        //  Log.e("SEARCH TERM DIST LIST " , "pause -> search term is null" +searchTerm);
-
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-
-        //  Log.e("SEARCH TERM DIST LIST " , "stop -> search term is null");
-
-
     }
 
     @Override
     public void onListItemRemoved(String distKey, String distId) {
         // TODO Auto-generated method stub
-
-
-        //Log.e("REMOVED " , distKey  +" " +distId);
-
     }
-
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!isHidden()) {
+            if (!isNetworkAvailable()) {
+                Toast.makeText(getActivity(), "Network not available at this moment", Toast.LENGTH_SHORT).show();
+            } else {
+                int count = getActivity().getBaseContext().getContentResolver().delete(Uri.parse("content://com.symphony.database.DBProvider/deleteAllDistributer"), null, null);
+                getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
+                        DistributerList.this);
+            }
+        }
     }
 }

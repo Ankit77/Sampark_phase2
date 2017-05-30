@@ -24,8 +24,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class SymphonyUtils {
 
@@ -190,12 +192,18 @@ public class SymphonyUtils {
         return false;
     }
 
-    public static String getCurrentDataTime() {
-        Calendar c = Calendar.getInstance();
-
-        SimpleDateFormat df = new SimpleDateFormat(Const.DEFAULT_DATETIME_FORMAT);
-        String formattedDate = df.format(c.getTime());
-        return formattedDate;
+    public static String getDateTime(String datetime) {
+        try {
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy hh:mm:ss");
+            Date date = sdf.parse(datetime);
+            SimpleDateFormat df = new SimpleDateFormat(Const.DEFAULT_DATETIME_FORMAT);
+            String formattedDate = df.format(date);
+            return formattedDate;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
 // Now formattedDate have current date/time
     }
 

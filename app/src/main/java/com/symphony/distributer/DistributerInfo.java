@@ -125,10 +125,7 @@ public class DistributerInfo extends Fragment {
                                             null,
                                             null
                                     );
-
                             //	Toast.makeText(getActivity(), "Rows deleted "+ deletedRows, Toast.LENGTH_LONG).show();
-
-
                         }
                     }).start();
 
@@ -200,20 +197,13 @@ public class DistributerInfo extends Fragment {
 
                     if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 
-
                         mDistributerListener.onGPSDialogOpen("Can not get GEO LOCATION , because GPS is disabled");
 
-                        //	Toast.makeText(getActivity(), "Can not geo location , because GPS is disabled", Toast.LENGTH_LONG).show();
-
-
                     } else {
-
-
 //				            Log.e("DISTRIBUTER'S CO-ORDINATES", DistributerActivity.currentLocation+"");
 //		                    Log.e("BG  CO-ORDINATES", SMSService.addressLatLng+"");
 
                         if (SMSService.addressLatLng != null && !TextUtils.isEmpty(SMSService.addressLatLng)) {
-
 
                             setGeoLocaitonBtnEnable(false);
                             mDistributerListener.onCameraImage((String) bundle.get("distid"), (String) bundle.get("distkey"), (String) bundle.get("distname"));

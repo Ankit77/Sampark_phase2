@@ -181,6 +181,20 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
 
     private void signOut() {
         e_sampark.getSharedPreferences().edit().clear().commit();
+        getContentResolver()
+                .delete(Uri.parse("content://com.symphony.database.DBProvider/deleteDistributerReport"),
+                        null,
+                        null);
+
+        getContentResolver()
+                .delete(Uri.parse("content://com.symphony.database.DBProvider/deleteCheckReport"),
+                        DB.CHECK_FLAG + " = 0",
+                        null);
+
+        getContentResolver()
+                .delete(Uri.parse("content://com.symphony.database.DBProvider/deleteNotificationReport"),
+                        null,
+                        null);
         Intent intent = new Intent(this, SymphonyHome.class);
         intent.putExtra("finish", true);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
@@ -264,7 +278,7 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
                         valueOne.put(DB.DIST_TIMESTAMP, timeStampSort);
 
 
-                        if (SMSService.addressLatLng != null && !TextUtils.isEmpty(SMSService.addressLatLng)) {
+                        if (!TextUtils.isEmpty(SMSService.addressLatLng)) {
 
                             String[] latlng = SMSService.addressLatLng.split(",");
 
@@ -417,27 +431,6 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
             Toast.makeText(this, "Camera is not supported on this device", Toast.LENGTH_LONG).show();
         }
     }
-
-
-//    public void startSyncAlram() {
-//        alramManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-//        Intent alramReceiverIntent = new Intent(this, SyncAlaram.class);
-//        alramReceiverIntent.setAction(SyncAlaram.DB_CHECK_FOR_DIST_PHOTO);
-//        alramPendingIntent = PendingIntent.getBroadcast(this, 0, alramReceiverIntent, 0);
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(System.currentTimeMillis());
-//        // Cancel alarms
-//        try {
-//            alramManager.cancel(alramPendingIntent);
-//        } catch (Exception e) {
-//            Log.e("Distributer Activity", "AlarmManager update was not canceled. " + e.toString());
-//        }
-//        alramManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-//                1000 * 120, alramPendingIntent);
-//        edit = prefs.edit();
-//        edit.putBoolean("isAlramOn", true);
-//        edit.commit();
-//    }
 
     @Override
     protected void onStart() {
