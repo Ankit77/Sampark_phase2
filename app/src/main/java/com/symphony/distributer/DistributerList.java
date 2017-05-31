@@ -497,14 +497,14 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (!isHidden()) {
-            if (!isNetworkAvailable()) {
-                Toast.makeText(getActivity(), "Network not available at this moment", Toast.LENGTH_SHORT).show();
-            } else {
-                int count = getActivity().getBaseContext().getContentResolver().delete(Uri.parse("content://com.symphony.database.DBProvider/deleteAllDistributer"), null, null);
-                getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
-                        DistributerList.this);
-            }
-        }
+//        if (!isHidden()) {
+//            if (!isNetworkAvailable()) {
+//                Toast.makeText(getActivity(), "Network not available at this moment", Toast.LENGTH_SHORT).show();
+//            } else {
+//                int count = getActivity().getBaseContext().getContentResolver().delete(Uri.parse("content://com.symphony.database.DBProvider/deleteAllDistributer"), null, null);
+//                getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
+//                        DistributerList.this);
+//            }
+//        }
     }
 }

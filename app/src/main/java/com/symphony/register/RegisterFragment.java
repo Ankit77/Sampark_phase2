@@ -351,7 +351,7 @@ public class RegisterFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = SymphonyUtils.displayProgressDialog(getActivity());
+            progressDialog = SymphonyUtils.displayProgressDialog(getActivity(),"Loading...");
         }
 
         @Override

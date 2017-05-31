@@ -259,7 +259,7 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = SymphonyUtils.displayProgressDialog(SymphonyHome.this);
+            progressDialog = SymphonyUtils.displayProgressDialog(SymphonyHome.this,"Loading...");
         }
 
         @Override
@@ -339,7 +339,7 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = SymphonyUtils.displayProgressDialog(SymphonyHome.this);
+            progressDialog = SymphonyUtils.displayProgressDialog(SymphonyHome.this, "Please wait,Loading Customer data");
         }
 
         @Override

@@ -383,7 +383,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = SymphonyUtils.displayProgressDialog(getActivity());
+            progressDialog = SymphonyUtils.displayProgressDialog(getActivity(),"Loading...");
         }
 
         @Override

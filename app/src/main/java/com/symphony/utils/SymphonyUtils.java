@@ -133,9 +133,9 @@ public class SymphonyUtils {
         }
     }
 
-    public static ProgressDialog displayProgressDialog(Context context) {
+    public static ProgressDialog displayProgressDialog(Context context,String message) {
         ProgressDialog dialog = new ProgressDialog(context);
-        dialog.setMessage("Loading....");
+        dialog.setMessage(message);
         dialog.setCancelable(false);
         dialog.show();
         return dialog;

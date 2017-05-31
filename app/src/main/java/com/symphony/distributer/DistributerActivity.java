@@ -311,8 +311,8 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
                         Intent intent = new Intent(DistributerActivity.this, SyncManager.class);
                         intent.setAction(SyncManager.SYNC_DISTRIBUTER_DATA);
                         startService(intent);
-
-                        getSupportFragmentManager().popBackStack();
+//                        super.onBackPressed();
+                        //getSupportFragmentManager().popBackStack();
 
 
                     }
@@ -495,7 +495,7 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = SymphonyUtils.displayProgressDialog(DistributerActivity.this);
+            progressDialog = SymphonyUtils.displayProgressDialog(DistributerActivity.this,"Loading...");
         }
 
         @Override
