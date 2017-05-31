@@ -8,7 +8,7 @@ public class DB {
 	//database 
 	public static final String DATABASE_NAME = "salesapp";
 	public static final String CREATE_DATABASE ="CREATE DATABASE "+ DATABASE_NAME;
-	public static final int DATABASE_VERSION =1;
+	public static final int DATABASE_VERSION =2;
 	public static final String DATABASE_STRING = "symphonysales";
 	
 	

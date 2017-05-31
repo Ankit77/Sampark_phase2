@@ -52,8 +52,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     private SharedPreferences.Editor editor;
     //    private LocationFailedReceiver locationFailedReceiver;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    // private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
-    private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
+    private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
+    // private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
     private E_Sampark e_sampark;
     private ProgressDialog progressDialog;
     private FloatingActionButton fbSyncMasterData;
@@ -119,7 +119,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     @Override
     public void onResume() {
         super.onResume();
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         getActivity().registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter("ENABLE_BUTTON"));
         getActivity().registerReceiver(checkinoutFailedReceiver, new IntentFilter("com.symphony.CHECKINOUTFAIL"));
@@ -322,7 +322,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
             }
 
         } else if (view == checkStatus) {
-            if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 mDistributerListener.onGPSDialogOpen("Can not CHECK IN/OUT , because GPS is disabled");
             } else {
                 if (SymphonyUtils.isAutomaticDateTime(getActivity())) {
@@ -332,7 +332,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                     } else {
 
                         if (!SymphonyUtils.isFackLocation(getActivity(), SMSService.location)) {
-                            Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                            Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             if (location != null) {
 
                                 Calendar calendar = Calendar.getInstance();
@@ -364,7 +364,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                                 }
                                 editor.commit();
                             } else {
-                                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
+                                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
                                 Toast.makeText(getActivity(), "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
                             }
                         } else {
@@ -383,7 +383,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = SymphonyUtils.displayProgressDialog(getActivity(),"Loading...");
+            progressDialog = SymphonyUtils.displayProgressDialog(getActivity(), "Loading...");
         }
 
         @Override
