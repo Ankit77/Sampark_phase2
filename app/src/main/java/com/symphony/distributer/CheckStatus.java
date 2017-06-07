@@ -389,7 +389,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected ArrayList<MasterDataModel> doInBackground(String... strings) {
             WSGetMasterData wsGetMasterData = new WSGetMasterData();
-            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), getActivity());
+            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")),prefs.getString("usermobilenumber", ""), getActivity());
         }
 
         @Override
@@ -413,7 +413,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected ArrayList<String> doInBackground(Void... voids) {
             WSGetDeletedMasterData wsGetDeletedMasterData = new WSGetDeletedMasterData();
-            return wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), getActivity());
+            return wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")),prefs.getString("usermobilenumber", ""), getActivity());
         }
 
         @Override

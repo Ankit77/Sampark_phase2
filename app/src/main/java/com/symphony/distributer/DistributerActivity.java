@@ -42,7 +42,10 @@ import com.symphony.E_Sampark;
 import com.symphony.R;
 import com.symphony.SymphonyHome;
 import com.symphony.database.DB;
+import com.symphony.http.WSGetDeletedMasterData;
+import com.symphony.http.WSGetMasterData;
 import com.symphony.http.WSLogout;
+import com.symphony.model.MasterDataModel;
 import com.symphony.report.SymphonyReport;
 import com.symphony.sms.SMSService;
 import com.symphony.sms.SyncAlaram;
@@ -52,6 +55,7 @@ import com.symphony.utils.SymphonyUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -86,6 +90,8 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     private static final String HTTP_PORT = "800";
     private static final String HTTP_PROTOCOL = "http://";
     private String HTTP_ENDPOINT = HTTP_PROTOCOL + HTTP_SERVER + ":" + HTTP_PORT;
+    private AsyncLoadMasterData asyncLoadMasterData;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,6 +119,10 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
                     .build();
         }
         mGoogleApiClient.connect();
+        if (e_sampark.getSharedPreferences().getBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, true)) {
+            asyncLoadMasterData = new AsyncLoadMasterData();
+            asyncLoadMasterData.execute();
+        }
     }
 
     @Override
@@ -495,7 +505,7 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = SymphonyUtils.displayProgressDialog(DistributerActivity.this,"Loading...");
+            progressDialog = SymphonyUtils.displayProgressDialog(DistributerActivity.this, "Loading...");
         }
 
         @Override
@@ -555,4 +565,55 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         }
     }
 
+
+    private class AsyncLoadMasterData extends AsyncTask<String, Void, ArrayList<MasterDataModel>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = SymphonyUtils.displayProgressDialog(DistributerActivity.this, "Please wait,Loading Customer data");
+        }
+
+        @Override
+        protected ArrayList<MasterDataModel> doInBackground(String... strings) {
+            WSGetMasterData wsGetMasterData = new WSGetMasterData();
+            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), DistributerActivity.this);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<MasterDataModel> masterDataModels) {
+            super.onPostExecute(masterDataModels);
+
+
+            if (masterDataModels != null && masterDataModels.size() > 0) {
+                e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
+                e_sampark.getSharedPreferences_masterdata().edit().putBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, false).commit();
+            }
+            new AsyncGetDeletedMasterData().execute();
+        }
+    }
+
+    private class AsyncGetDeletedMasterData extends AsyncTask<Void, Void, ArrayList<String>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<String> doInBackground(Void... voids) {
+            WSGetDeletedMasterData wsGetDeletedMasterData = new WSGetDeletedMasterData();
+            return wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), DistributerActivity.this);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> masterIds) {
+            super.onPostExecute(masterIds);
+
+            if (masterIds != null && masterIds.size() > 0) {
+                for (int i = 0; i < masterIds.size(); i++) {
+                    e_sampark.getSymphonyDB().deleteMasterData(masterIds.get(i));
+                }
+            }
+            SymphonyUtils.dismissProgressDialog(progressDialog);
+        }
+    }
 }

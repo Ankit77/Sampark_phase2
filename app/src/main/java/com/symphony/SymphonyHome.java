@@ -34,8 +34,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.symphony.distributer.DistributerActivity;
-import com.symphony.http.WSGetMasterData;
-import com.symphony.model.MasterDataModel;
 import com.symphony.register.RegisterFragment;
 import com.symphony.service.GetCheckInMeterService;
 import com.symphony.service.TimeTickService;
@@ -45,7 +43,6 @@ import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -63,7 +60,7 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
     private E_Sampark e_sampark;
     private AsyncRegisterGCM asyncRegisterGCM;
     private ProgressDialog progressDialog;
-    private AsyncLoadMasterData asyncLoadMasterData;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,13 +79,8 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         this.getSupportActionBar().setIcon(android.R.color.transparent);
         prefs = e_sampark.getSharedPreferences();
-//        init();
-        if (e_sampark.getSharedPreferences().getBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, true)) {
-            asyncLoadMasterData = new AsyncLoadMasterData();
-            asyncLoadMasterData.execute();
-        } else {
-            init();
-        }
+        init();
+
 
     }
 
@@ -335,32 +327,6 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
     }
 
 
-    private class AsyncLoadMasterData extends AsyncTask<String, Void, ArrayList<MasterDataModel>> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog = SymphonyUtils.displayProgressDialog(SymphonyHome.this, "Please wait,Loading Customer data");
-        }
 
-        @Override
-        protected ArrayList<MasterDataModel> doInBackground(String... strings) {
-            WSGetMasterData wsGetMasterData = new WSGetMasterData();
-            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), SymphonyHome.this);
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<MasterDataModel> masterDataModels) {
-            super.onPostExecute(masterDataModels);
-
-
-            if (masterDataModels != null && masterDataModels.size() > 0) {
-                e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
-                e_sampark.getSharedPreferences_masterdata().edit().putBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, false).commit();
-            }
-            SymphonyUtils.dismissProgressDialog(progressDialog);
-            init();
-
-        }
-    }
 
 }
