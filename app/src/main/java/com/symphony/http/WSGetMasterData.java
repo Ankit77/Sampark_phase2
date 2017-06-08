@@ -28,6 +28,7 @@ public class WSGetMasterData {
 
     public ArrayList<MasterDataModel> executeTown(String lastdattime, String mobile, Context context) {
         e_sampark = (E_Sampark) context.getApplicationContext();
+        //String murl = "http://61.12.85.74:800/eSampark_Masterdata.asp?NM=track_new&PASS=track123&xMNO=9374146578&lastdate=" + lastdattime;
         String murl = "http://61.12.85.74:800/eSampark_Masterdata.asp?NM=track_new&PASS=track123&xMNO=" + mobile + "&lastdate=" + lastdattime;
         WriteLog.E("URL", murl);
         URL url = null;
