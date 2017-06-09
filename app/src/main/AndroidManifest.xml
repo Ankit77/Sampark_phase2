@@ -2,7 +2,7 @@
     package="com.symphony"
     android:installLocation="internalOnly"
     android:versionCode="12"
-    android:versionName="1.10">
+    android:versionName="1.7">
 
     <uses-sdk
         android:minSdkVersion="11"
