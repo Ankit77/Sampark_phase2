@@ -57,8 +57,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     private SharedPreferences.Editor editor;
     //    private LocationFailedReceiver locationFailedReceiver;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    //private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
-    private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
+    private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
+    //private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
     private E_Sampark e_sampark;
     private ProgressDialog progressDialog;
     private FloatingActionButton fbSyncMasterData;
@@ -124,7 +124,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     @Override
     public void onResume() {
         super.onResume();
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
         getActivity().registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter("ENABLE_BUTTON"));
         getActivity().registerReceiver(checkinoutFailedReceiver, new IntentFilter("com.symphony.CHECKINOUTFAIL"));
@@ -327,7 +327,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
             }
 
         } else if (view == checkStatus) {
-            if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 mDistributerListener.onGPSDialogOpen("Can not CHECK IN/OUT , because GPS is disabled");
             } else {
                 if (SymphonyUtils.isAutomaticDateTime(getActivity())) {
@@ -337,13 +337,13 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                     } else {
 
                         if (!SymphonyUtils.isFackLocation(getActivity(), SMSService.location)) {
-                            Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                            Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             if (location != null) {
                                 AsyncGetNearbyDealer asyncGetNearbyDealer = new AsyncGetNearbyDealer();
                                 asyncGetNearbyDealer.execute();
 
                             } else {
-                                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
+                                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
                                 Toast.makeText(getActivity(), "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
                             }
                         } else {
@@ -466,28 +466,35 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                     dealerlatlongIds.add(hasmapList.get(closestDistanceList.get(i)).getDealerletlongid());
                 }
                 if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKOUT)) {
-                    if (dealerlatlongIds.contains(e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""))) {
-                        showAlertForCheckout(getActivity(), "You are not checkout from check-In dealer,Do you want to go back or cancel visit");
-                        return;
+
+                    if (e_sampark.getSharedPreferences().getString(Const.PREF_VISIT_CHECKIN_DATE, "").equalsIgnoreCase(SymphonyUtils.getCurrentDate())) {
+                        if (!dealerlatlongIds.contains(e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""))) {
+                            showAlertForCheckout(getActivity(), "You are not checkout from check-In dealer,Do you want to go back or cancel visit");
+                            return;
+                        } else {
+                            Calendar calendar = Calendar.getInstance();
+                            checkStatus.setEnabled(false);
+                            checkStatus.setVisibility(View.GONE);
+                            txtMessage.setVisibility(View.VISIBLE);
+                            txtCheckINOUTLabel.setVisibility(View.GONE);
+                            SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
+                            editor.putBoolean("ISENABLE", false);
+                            editor.putLong("TIME", calendar.getTimeInMillis());
+                            editor.putLong("COUNTDOWNTIMER", TIME_DIFFERENCE);
+                            editor.commit();
+                            editor.putString("TAG", Const.CHECKIN);
+                            Intent intentService = new Intent(getActivity(), SMSService.class);
+                            intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
+                            intentService.putExtra("checkstatus", false);
+                            getActivity().startService(intentService);
+                            setCheckIn();
+                            editor.commit();
+                        }
                     } else {
-                        Calendar calendar = Calendar.getInstance();
-                        checkStatus.setEnabled(false);
-                        checkStatus.setVisibility(View.GONE);
-                        txtMessage.setVisibility(View.VISIBLE);
-                        txtCheckINOUTLabel.setVisibility(View.GONE);
-                        SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
-                        editor.putBoolean("ISENABLE", false);
-                        editor.putLong("TIME", calendar.getTimeInMillis());
-                        editor.putLong("COUNTDOWNTIMER", TIME_DIFFERENCE);
-                        editor.commit();
-                        editor.putString("TAG", Const.CHECKIN);
-                        Intent intentService = new Intent(getActivity(), SMSService.class);
-                        intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
-                        intentService.putExtra("checkstatus", false);
-                        getActivity().startService(intentService);
-                        setCheckIn();
-                        editor.commit();
+                        showAlertForVisitCancel(getActivity(), "Your visit is cancelled due to not checkout on Same Day.");
                     }
+
+
                 } else {
                     new AlertDialog.Builder(getActivity())
                             .setSingleChoiceItems(dealername, 0, null)
@@ -517,6 +524,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                                             setCheckOut();
                                             e_sampark.getSharedPreferences().edit().putString(Const.PREF_CHECKIN_DEALERLATLONGID, masterDataModel.getDealerletlongid()).commit();
                                             e_sampark.getSharedPreferences().edit().putString(Const.PREF_VISIT_UNIQKEY, "" + System.currentTimeMillis()).commit();
+                                            e_sampark.getSharedPreferences().edit().putString(Const.PREF_VISIT_CHECKIN_DATE, SymphonyUtils.getCurrentDate()).commit();
                                         }
                                         editor.commit();
                                     }
@@ -556,6 +564,30 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                 dialog.dismiss();
             }
         })
+                .setIcon(R.drawable.ic_launcher)
+                .show();
+    }
+
+    //Show alert for cancel visit once date is change
+    public void showAlertForVisitCancel(Context context, final String message) {
+        new AlertDialog.Builder(context)
+                .setTitle(context.getString(R.string.app_name))
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_launcher)
+                .setMessage(message)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
+                        if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
+                            e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
+                        } else {
+                            e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
+                        }
+                        setCheckIn();
+                        dialog.dismiss();
+                    }
+                })
                 .setIcon(R.drawable.ic_launcher)
                 .show();
     }

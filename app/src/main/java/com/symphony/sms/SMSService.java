@@ -77,14 +77,14 @@ public class SMSService extends Service implements LocationListener {
         servicesConnected();
         e_sampark = (E_Sampark) getApplicationContext();
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
             // Do something with the recent location fix
             //  otherwise wait for the update below
             addressLatLng = location.getLatitude() + "," + location.getLongitude();
             Toast.makeText(SMSService.this, "Last Location - " + addressLatLng, Toast.LENGTH_LONG).show();
         } else {
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
         }
     }
 
@@ -98,11 +98,11 @@ public class SMSService extends Service implements LocationListener {
 
             if (FETCH_LOCATION_INTENT == intent.getAction()) {
                 Log.e(SMSService.class.getSimpleName(), "Location is Change");
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
             } else {
                 mintent = intent;
                 mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 //  otherwise wait for the update below
                 if (location != null) {
                     addressLatLng = location.getLatitude() + "," + location.getLongitude();
@@ -110,7 +110,7 @@ public class SMSService extends Service implements LocationListener {
                     Toast.makeText(SMSService.this, "Last Location - " + addressLatLng, Toast.LENGTH_LONG).show();
 
                 } else {
-                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                 }
 
             }
@@ -354,9 +354,7 @@ public class SMSService extends Service implements LocationListener {
                             checkData.setCheckFlag(true);
                             updateCheckFlag(checkData);
                             //if checkin failed than clear dealerlatlongid
-                            if (Boolean.parseBoolean(checkStatus)) {
-                                e_sampark.getSharedPreferences().edit().putString(Const.PREF_CHECKIN_DEALERLATLONGID, "").commit();
-                            }
+
                         }
                     });
                 } else {

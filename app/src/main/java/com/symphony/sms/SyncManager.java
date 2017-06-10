@@ -296,7 +296,7 @@ public class SyncManager extends IntentService {
                 DB.CHECK_LNG,
                 DB.DIST_CHECK_NAME,
                 DB.CHECK_TIMESTAMP,
-                DB.CHECK_DEALERLETLONGID
+                DB.CHECK_DEALERLETLONGID,DB.CHECK_UNIQKEY
 
         };
 

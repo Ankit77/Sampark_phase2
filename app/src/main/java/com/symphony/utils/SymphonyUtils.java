@@ -249,4 +249,11 @@ public class SymphonyUtils {
             }
         }
     }
+    public static String getCurrentDate()
+    {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = df.format(c.getTime());
+        return formattedDate;
+    }
 }
