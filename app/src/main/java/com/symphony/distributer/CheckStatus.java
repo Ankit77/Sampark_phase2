@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -15,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,9 +39,12 @@ import com.symphony.receiver.AlarmReceiver;
 import com.symphony.sms.SMSService;
 import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
+import com.symphony.utils.WriteLog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class CheckStatus extends Fragment implements CheckStatusListener, LocationListener, SMSService.OnStatusFailedListner, OnClickListener {
 
@@ -334,35 +339,9 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                         if (!SymphonyUtils.isFackLocation(getActivity(), SMSService.location)) {
                             Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                             if (location != null) {
+                                AsyncGetNearbyDealer asyncGetNearbyDealer = new AsyncGetNearbyDealer();
+                                asyncGetNearbyDealer.execute();
 
-                                Calendar calendar = Calendar.getInstance();
-                                checkStatus.setEnabled(false);
-                                checkStatus.setVisibility(View.GONE);
-                                txtMessage.setVisibility(View.VISIBLE);
-                                txtCheckINOUTLabel.setVisibility(View.GONE);
-                                SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
-                                editor.putBoolean("ISENABLE", false);
-                                editor.putLong("TIME", calendar.getTimeInMillis());
-                                editor.putLong("COUNTDOWNTIMER", TIME_DIFFERENCE);
-                                editor.commit();
-
-
-                                if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
-                                    editor.putString("TAG", Const.CHECKOUT);
-                                    Intent intentService = new Intent(getActivity(), SMSService.class);
-                                    intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
-                                    intentService.putExtra("checkstatus", true);
-                                    getActivity().startService(intentService);
-                                    setCheckOut();
-                                } else {
-                                    editor.putString("TAG", Const.CHECKIN);
-                                    Intent intentService = new Intent(getActivity(), SMSService.class);
-                                    intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
-                                    intentService.putExtra("checkstatus", false);
-                                    getActivity().startService(intentService);
-                                    setCheckIn();
-                                }
-                                editor.commit();
                             } else {
                                 mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
                                 Toast.makeText(getActivity(), "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
@@ -389,7 +368,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected ArrayList<MasterDataModel> doInBackground(String... strings) {
             WSGetMasterData wsGetMasterData = new WSGetMasterData();
-            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")),prefs.getString("usermobilenumber", ""), getActivity());
+            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), getActivity());
         }
 
         @Override
@@ -413,7 +392,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected ArrayList<String> doInBackground(Void... voids) {
             WSGetDeletedMasterData wsGetDeletedMasterData = new WSGetDeletedMasterData();
-            return wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")),prefs.getString("usermobilenumber", ""), getActivity());
+            return wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), getActivity());
         }
 
         @Override
@@ -427,6 +406,146 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
             }
             SymphonyUtils.dismissProgressDialog(progressDialog);
         }
+    }
+
+    private class AsyncGetNearbyDealer extends AsyncTask<Void, Void, Void> {
+        private ArrayList<Float> closestDistanceList;
+        private ArrayList<MasterDataModel> masterDataList;
+        private HashMap<Float, MasterDataModel> hasmapList;
+        private ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = SymphonyUtils.displayProgressDialog(getActivity(), "Loading....");
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            /**
+             * Algoridham for finding closest branch from check in location
+             */
+            masterDataList = new ArrayList<>();
+            closestDistanceList = new ArrayList<>();
+            hasmapList = new HashMap<>();
+            masterDataList = e_sampark.getSymphonyDB().getMasterDataList();
+            Location currentLocation = SMSService.location;
+            if (masterDataList != null && masterDataList.size() > 0) {
+
+                for (int i = 0; i < masterDataList.size(); i++) {
+                    if (!TextUtils.isEmpty(masterDataList.get(i).getLat()) && !TextUtils.isEmpty(masterDataList.get(i).getLang())) {
+                        Location destination = new Location("");
+                        destination.setLatitude(Double.parseDouble(masterDataList.get(i).getLat()));
+                        destination.setLongitude(Double.parseDouble(masterDataList.get(i).getLang()));
+                        float distanceInMeters = currentLocation.distanceTo(destination);
+                        if (distanceInMeters < e_sampark.getSharedPreferences().getInt(Const.PREF_CHECKIN_METER, Const.DEFAULT_CHECKIN_METER)) {
+                            hasmapList.put(distanceInMeters, masterDataList.get(i));
+                            closestDistanceList.add(distanceInMeters);
+                        }
+                        WriteLog.E(SMSService.class.getSimpleName(), "Distance = " + distanceInMeters);
+                    }
+                }
+
+                //sorting array for getting close distance
+                Collections.sort(closestDistanceList);
+
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void s) {
+            super.onPostExecute(s);
+            SymphonyUtils.dismissProgressDialog(progressDialog);
+            if (closestDistanceList != null && closestDistanceList.size() > 0) {
+                ArrayList<String> dealerlatlongIds = new ArrayList<>();
+                String[] dealername = new String[closestDistanceList.size()];
+                for (int i = 0; i < closestDistanceList.size(); i++) {
+                    dealername[i] = hasmapList.get(closestDistanceList.get(i)).getName();
+                    dealerlatlongIds.add(hasmapList.get(closestDistanceList.get(i)).getDealerletlongid());
+                }
+                if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKOUT)) {
+                    if (!dealerlatlongIds.contains(e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""))) {
+                        showAlertForCheckout(getActivity(), "You are not checkout from check-In dealer,Do you want to go back or cancel visit");
+                        return;
+                    }
+                }
+
+                new AlertDialog.Builder(getActivity())
+                        .setSingleChoiceItems(dealername, 0, null)
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                                if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
+                                    MasterDataModel masterDataModel = hasmapList.get(closestDistanceList.get(selectedPosition));
+                                    Calendar calendar = Calendar.getInstance();
+                                    checkStatus.setEnabled(false);
+                                    checkStatus.setVisibility(View.GONE);
+                                    txtMessage.setVisibility(View.VISIBLE);
+                                    txtCheckINOUTLabel.setVisibility(View.GONE);
+                                    SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
+                                    editor.putBoolean("ISENABLE", false);
+                                    editor.putLong("TIME", calendar.getTimeInMillis());
+                                    editor.putLong("COUNTDOWNTIMER", TIME_DIFFERENCE);
+                                    editor.commit();
+                                    if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
+                                        editor.putString("TAG", Const.CHECKOUT);
+                                        Intent intentService = new Intent(getActivity(), SMSService.class);
+                                        intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
+                                        intentService.putExtra("checkstatus", true);
+                                        intentService.putExtra("getdealerlatlongId", masterDataModel.getDealerletlongid());
+                                        getActivity().startService(intentService);
+                                        setCheckOut();
+                                        e_sampark.getSharedPreferences().edit().putString(Const.PREF_CHECKIN_DEALERLATLONGID, masterDataModel.getDealerletlongid()).commit();
+                                    } else {
+                                        editor.putString("TAG", Const.CHECKIN);
+                                        Intent intentService = new Intent(getActivity(), SMSService.class);
+                                        intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
+                                        intentService.putExtra("checkstatus", false);
+                                        getActivity().startService(intentService);
+                                        setCheckIn();
+                                    }
+                                    editor.commit();
+                                }
+                                // Do something useful withe the position of the selected radio button
+                            }
+                        })
+                        .show();
+            } else {
+                Toast.makeText(getActivity(), "No nearby dealer available", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void showAlertForCheckout(Context context, final String message) {
+        new AlertDialog.Builder(context)
+                .setTitle(context.getString(R.string.app_name))
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_launcher)
+                .setMessage(message)
+                .setPositiveButton("GoBack", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("Cancel Visit", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // continue with delete
+                e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
+                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
+                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
+                } else {
+                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
+                }
+                setCheckIn();
+                dialog.dismiss();
+            }
+        })
+                .setIcon(R.drawable.ic_launcher)
+                .show();
     }
 
 }
