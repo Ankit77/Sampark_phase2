@@ -288,12 +288,13 @@ public class SMSService extends Service implements LocationListener {
 
                     checkStatusValue.put(DB.CHECK_FLAG, 1);
                     checkStatusValue.put(DB.CHECK_DEALERLETLONGID, e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""));
+                    checkStatusValue.put(DB.CHECK_UNIQKEY, e_sampark.getSharedPreferences().getString(Const.PREF_VISIT_UNIQKEY, ""));
                     final Uri insert = getBaseContext().getContentResolver().insert(Uri.parse("content://com.symphony.database.DBProvider/addCheckStatus"),
                             checkStatusValue);
                     Log.e("SMSService", "sending on webservice update this id ->>>> " + insert.getLastPathSegment());
 
                     httpManger = new HttpManager(SMSService.this);
-                    httpManger.sendCheckStatus(smsBody, e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""), insert.getLastPathSegment(), new HttpStatusListener() {
+                    httpManger.sendCheckStatus(smsBody, e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""), insert.getLastPathSegment(),e_sampark.getSharedPreferences().getString(Const.PREF_VISIT_UNIQKEY,""), new HttpStatusListener() {
                         CheckData checkData = new CheckData();
 
                         @Override

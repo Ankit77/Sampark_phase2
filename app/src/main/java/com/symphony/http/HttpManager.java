@@ -133,7 +133,7 @@ public class HttpManager {
 
     }
 
-    public void sendCheckStatus(String smsBody, String dealerLatlongId, String id, HttpStatusListener listener) {
+    public void sendCheckStatus(String smsBody, String dealerLatlongId, String id,String uniqkey, HttpStatusListener listener) {
         if (smsBody != null) {
 
             if (httpStatusListener != null)
@@ -147,7 +147,7 @@ public class HttpManager {
                         "&Lat=" + smsArry[2] +
                         "&Long=" + smsArry[3] +
                         "&Timestamp=" + smsArry[4] +
-                        "&v=" + smsArry[5] + "&authtoken=" + e_sampark.getSharedPreferences().getString(Const.PREF_AUTH_TOKEN, "") + "&DealerLETLONGID=" + dealerLatlongId;
+                        "&v=" + smsArry[5] + "&authtoken=" + e_sampark.getSharedPreferences().getString(Const.PREF_AUTH_TOKEN, "") + "&DealerLETLONGID=" + dealerLatlongId + "&uniquekey=" + uniqkey;
                 WriteLog.E("URL", HTTP_CHECK_URL);
                 new FireHttpRequest().execute(HTTP_CHECK_URL, HTTP_CHECK_STATUS, smsBody, id);
             }

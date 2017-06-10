@@ -57,8 +57,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     private SharedPreferences.Editor editor;
     //    private LocationFailedReceiver locationFailedReceiver;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
-    // private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
+    //private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
+    private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
     private E_Sampark e_sampark;
     private ProgressDialog progressDialog;
     private FloatingActionButton fbSyncMasterData;
@@ -466,53 +466,65 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                     dealerlatlongIds.add(hasmapList.get(closestDistanceList.get(i)).getDealerletlongid());
                 }
                 if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKOUT)) {
-                    if (!dealerlatlongIds.contains(e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""))) {
+                    if (dealerlatlongIds.contains(e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""))) {
                         showAlertForCheckout(getActivity(), "You are not checkout from check-In dealer,Do you want to go back or cancel visit");
                         return;
+                    } else {
+                        Calendar calendar = Calendar.getInstance();
+                        checkStatus.setEnabled(false);
+                        checkStatus.setVisibility(View.GONE);
+                        txtMessage.setVisibility(View.VISIBLE);
+                        txtCheckINOUTLabel.setVisibility(View.GONE);
+                        SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
+                        editor.putBoolean("ISENABLE", false);
+                        editor.putLong("TIME", calendar.getTimeInMillis());
+                        editor.putLong("COUNTDOWNTIMER", TIME_DIFFERENCE);
+                        editor.commit();
+                        editor.putString("TAG", Const.CHECKIN);
+                        Intent intentService = new Intent(getActivity(), SMSService.class);
+                        intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
+                        intentService.putExtra("checkstatus", false);
+                        getActivity().startService(intentService);
+                        setCheckIn();
+                        editor.commit();
                     }
-                }
-
-                new AlertDialog.Builder(getActivity())
-                        .setSingleChoiceItems(dealername, 0, null)
-                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                                int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                                if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
-                                    MasterDataModel masterDataModel = hasmapList.get(closestDistanceList.get(selectedPosition));
-                                    Calendar calendar = Calendar.getInstance();
-                                    checkStatus.setEnabled(false);
-                                    checkStatus.setVisibility(View.GONE);
-                                    txtMessage.setVisibility(View.VISIBLE);
-                                    txtCheckINOUTLabel.setVisibility(View.GONE);
-                                    SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
-                                    editor.putBoolean("ISENABLE", false);
-                                    editor.putLong("TIME", calendar.getTimeInMillis());
-                                    editor.putLong("COUNTDOWNTIMER", TIME_DIFFERENCE);
-                                    editor.commit();
+                } else {
+                    new AlertDialog.Builder(getActivity())
+                            .setSingleChoiceItems(dealername, 0, null)
+                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    dialog.dismiss();
+                                    int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                                     if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
-                                        editor.putString("TAG", Const.CHECKOUT);
-                                        Intent intentService = new Intent(getActivity(), SMSService.class);
-                                        intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
-                                        intentService.putExtra("checkstatus", true);
-                                        intentService.putExtra("getdealerlatlongId", masterDataModel.getDealerletlongid());
-                                        getActivity().startService(intentService);
-                                        setCheckOut();
-                                        e_sampark.getSharedPreferences().edit().putString(Const.PREF_CHECKIN_DEALERLATLONGID, masterDataModel.getDealerletlongid()).commit();
-                                    } else {
-                                        editor.putString("TAG", Const.CHECKIN);
-                                        Intent intentService = new Intent(getActivity(), SMSService.class);
-                                        intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
-                                        intentService.putExtra("checkstatus", false);
-                                        getActivity().startService(intentService);
-                                        setCheckIn();
+                                        MasterDataModel masterDataModel = hasmapList.get(closestDistanceList.get(selectedPosition));
+                                        Calendar calendar = Calendar.getInstance();
+                                        checkStatus.setEnabled(false);
+                                        checkStatus.setVisibility(View.GONE);
+                                        txtMessage.setVisibility(View.VISIBLE);
+                                        txtCheckINOUTLabel.setVisibility(View.GONE);
+                                        SharedPreferences.Editor editor = e_sampark.getSharedPreferences().edit();
+                                        editor.putBoolean("ISENABLE", false);
+                                        editor.putLong("TIME", calendar.getTimeInMillis());
+                                        editor.putLong("COUNTDOWNTIMER", TIME_DIFFERENCE);
+                                        editor.commit();
+                                        if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
+                                            editor.putString("TAG", Const.CHECKOUT);
+                                            Intent intentService = new Intent(getActivity(), SMSService.class);
+                                            intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
+                                            intentService.putExtra("checkstatus", true);
+                                            intentService.putExtra("getdealerlatlongId", masterDataModel.getDealerletlongid());
+                                            getActivity().startService(intentService);
+                                            setCheckOut();
+                                            e_sampark.getSharedPreferences().edit().putString(Const.PREF_CHECKIN_DEALERLATLONGID, masterDataModel.getDealerletlongid()).commit();
+                                            e_sampark.getSharedPreferences().edit().putString(Const.PREF_VISIT_UNIQKEY, "" + System.currentTimeMillis()).commit();
+                                        }
+                                        editor.commit();
                                     }
-                                    editor.commit();
+                                    // Do something useful withe the position of the selected radio button
                                 }
-                                // Do something useful withe the position of the selected radio button
-                            }
-                        })
-                        .show();
+                            })
+                            .show();
+                }
             } else {
                 Toast.makeText(getActivity(), "No nearby dealer available", Toast.LENGTH_LONG).show();
             }

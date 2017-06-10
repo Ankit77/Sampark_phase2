@@ -27,6 +27,7 @@ public class Const {
     public static final String PREF_AUTH_TOKEN = "PREF_AUTH_TOKEN";
     public static final String PREF_LAST_DATETIME = "PREF_LAST_DATETIME";
     public static final String PREF_CHECKIN_DEALERLATLONGID = "PREF_CHECKIN_DEALERLATLONGID";
+    public static final String PREF_VISIT_UNIQKEY = "PREF_VISIT_UNIQKEY";
     public static final String PREF_IS_LOAD_MASTER_DATA_FIRSTTIME = "PREF_IS_LOAD_MASTER_DATA_FIRSTTIME";
     public static final int DEFAULT_CHECKIN_METER = 109;
     public static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy-hh:mm:ss";

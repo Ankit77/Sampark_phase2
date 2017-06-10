@@ -194,6 +194,7 @@ public class DB {
 	public static final String DIST_CHECK_NAME = "dist_check_name";
 	public static final String CHECK_TIMESTAMP = "check_timestamp";
 	public static final String CHECK_DEALERLETLONGID = "DealerLETLONGID";
+	public static final String CHECK_UNIQKEY = "uniqkey";
 
 	
 
@@ -216,6 +217,7 @@ public class DB {
 									CHECK_LNG + " TEXT , "+
 									CHECK_TIMESTAMP+ " TEXT ,"+
 									CHECK_DEALERLETLONGID+ " TEXT ,"+
+									CHECK_UNIQKEY+ " TEXT ,"+
 									"FOREIGN KEY ( "+DIST_CHECK_KEY+" ) REFERENCES "+
 									DISTRIBUTER + " ( "+DIST_KEY+" ) " +
 									

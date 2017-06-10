@@ -45,7 +45,7 @@ public class SymphonyDB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqldb, int arg1, int arg2) {
         // TODO Auto-generated method stub
         if (arg2 > arg1) {
-            sqldb.execSQL("ALTER TABLE " + DB.CHECK + " ADD COLUMN " + DB.CHECK_DEALERLETLONGID);
+            sqldb.execSQL("ALTER TABLE " + DB.CHECK + " ADD COLUMN " + DB.CHECK_DEALERLETLONGID + "," + DB.CHECK_UNIQKEY);
         }
         onCreate(sqldb);
 

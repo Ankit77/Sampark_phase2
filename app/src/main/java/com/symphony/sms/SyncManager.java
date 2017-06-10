@@ -499,8 +499,9 @@ public class SyncManager extends IntentService {
                     String smsBody = curCheck.getString(curCheck.getColumnIndex(DB.CHECK_SMS));
                     final int checkId = curCheck.getInt(curCheck.getColumnIndex(DB.CHECK_ID));
                     String dealerLatlongId = curCheck.getString(curCheck.getColumnIndex(DB.CHECK_DEALERLETLONGID));
+                    String uniqkey = curCheck.getString(curCheck.getColumnIndex(DB.CHECK_UNIQKEY));
 
-                    sendCheckStatusData(smsBody, dealerLatlongId, String.valueOf(checkId));
+                    sendCheckStatusData(smsBody, dealerLatlongId, String.valueOf(checkId), uniqkey);
 
                 }
 
@@ -546,10 +547,10 @@ public class SyncManager extends IntentService {
     }
 
 
-    private void sendCheckStatusData(String smsBody, String dealerletlongid, final String checkId) {
+    private void sendCheckStatusData(String smsBody, String dealerletlongid, final String checkId, String uniqkey) {
 
         HttpManager httpManger = new HttpManager(SyncManager.this);
-        httpManger.sendCheckStatus(smsBody, dealerletlongid, checkId, new HttpStatusListener() {
+        httpManger.sendCheckStatus(smsBody, dealerletlongid, checkId, uniqkey, new HttpStatusListener() {
 
             CheckData checkData = new CheckData();
 
