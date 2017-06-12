@@ -2,56 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgroundapp"
     android:orientation="vertical"
-    android:background="@drawable/backgroundapp" 
-    android:padding="5dip"
-    
-    >
-    
- 
-    <EditText 
-                
+    android:padding="5dip">
+
+    <EditText
+        android:id="@+id/mainSearch"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="Search Distributer"
-        android:id="@+id/mainSearch"
-        android:visibility="gone"
-        />
-    
-  
-    
+        android:visibility="gone" />
+
     <ListView
-        
+        android:id="@+id/distributerList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/distributerList"
-        android:dividerHeight="8dip"
+        android:background="@android:color/transparent"
         android:divider="@android:color/transparent"
- 		android:background="@android:color/transparent"
-        
-        
-        />
-    
-   <TextView 
-       
-       
-    android:id="@+id/emptyView"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:textColor="@color/bg_blue"
-    android:textSize="22dip"
-    android:layout_gravity="center" 
-    android:gravity="center"
-    android:shadowColor="@color/text_white"
-	android:shadowDy="1" 
-	android:shadowRadius="0.04"
-	android:checked="true"
-	android:textStyle="bold"
-	android:visibility="gone"
-	
-       
-    
-    />
-   
-    
+        android:dividerHeight="8dip" />
+
+    <TextView
+        android:id="@+id/emptyView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:checked="true"
+        android:gravity="center"
+        android:shadowColor="@color/text_white"
+        android:shadowDy="1"
+        android:shadowRadius="0.04"
+        android:textColor="@color/bg_blue"
+        android:textSize="22dip"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+
 </LinearLayout>

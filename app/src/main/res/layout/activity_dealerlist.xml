@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/dealer_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/actionbar_bg"
+        android:contentInsetEnd="0dp"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingBottom="5dip"
+        android:paddingTop="5dip"
+        android:theme="@style/ThemeOverlay.MyApp.ActionBar"
+        app:contentInsetStart="0dp"></android.support.v7.widget.Toolbar>
+
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/dealer_toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:background="@color/actionbar_bg"-->
+        <!--android:contentInsetEnd="0dp"-->
+        <!--android:minHeight="?attr/actionBarSize"-->
+        <!--android:paddingBottom="5dip"-->
+        <!--android:paddingTop="5dip"-->
+        <!--app:contentInsetStart="0dp">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/imgBack"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_back" />-->
+    <!--</android.support.v7.widget.Toolbar>-->
+
+    <ListView
+        android:id="@+id/lvdealerlist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dip" />
+</LinearLayout>

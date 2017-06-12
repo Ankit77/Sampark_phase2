@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.symphony.E_Sampark;
 import com.symphony.R;
+import com.symphony.dealerList.DealerListActivity;
 import com.symphony.http.WSGetDeletedMasterData;
 import com.symphony.http.WSGetMasterData;
 import com.symphony.model.MasterDataModel;
@@ -398,7 +399,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         } else if (view == fbAdd) {
             animateFAB();
         } else if (view == fbDealerList) {
-            Toast.makeText(getActivity(), "List", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), DealerListActivity.class);
+            startActivity(intent);
         }
     }
 
