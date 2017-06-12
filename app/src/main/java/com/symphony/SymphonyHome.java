@@ -363,7 +363,7 @@ public class SymphonyHome extends AppCompatActivity implements GoogleApiClient.C
                 float serverversion = Float.parseFloat(s);
                 float appVersion = Float.parseFloat(SymphonyUtils.getAppVersion(SymphonyHome.this));
                 if (appVersion < serverversion) {
-                    showAlertDialog(SymphonyHome.this, "E-SAMPARK needs an update. There's a new version of E-CRM available on PlayStore.");
+                    showAlertDialog(SymphonyHome.this, "E-SAMPARK needs an update. There's a new version of E-SAMPARK available on PlayStore.");
                 } else {
                     AsyncRegisterGCM asyncRegisterGCM = new AsyncRegisterGCM();
                     asyncRegisterGCM.execute();

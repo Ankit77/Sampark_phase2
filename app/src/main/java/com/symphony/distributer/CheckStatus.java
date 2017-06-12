@@ -26,6 +26,8 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,8 +64,12 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     private E_Sampark e_sampark;
     private ProgressDialog progressDialog;
     private FloatingActionButton fbSyncMasterData;
+    private FloatingActionButton fbDealerList;
+    private FloatingActionButton fbAdd;
+    private Animation fab_open, fab_close, rotate_forward, rotate_backward;
     private AsyncLoadMasterData asyncLoadMasterData;
     private AsyncGetDeletedMasterData asyncGetDeletedMasterData;
+    private Boolean isFabOpen = false;
 
     @Override
     public void onStatusFailed() {
@@ -88,13 +94,47 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         txtMessage = (TextView) v.findViewById(R.id.txtStatusLabel);
         txtCheckINOUTLabel = (TextView) v.findViewById(R.id.checkStatusText);
         fbSyncMasterData = (FloatingActionButton) v.findViewById(R.id.fabSynCMasterData);
+        fbAdd = (FloatingActionButton) v.findViewById(R.id.fbadd);
+        fbDealerList = (FloatingActionButton) v.findViewById(R.id.fabDealerlist);
+        fab_open = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate_backward);
+
+
         prefs = e_sampark.getSharedPreferences();
         editor = prefs.edit();
         checkStatus.setOnClickListener(this);
         fbSyncMasterData.setOnClickListener(this);
+        fbAdd.setOnClickListener(this);
+        fbDealerList.setOnClickListener(this);
         return v;
     }
 
+    public void animateFAB() {
+
+        if (isFabOpen) {
+
+            fbAdd.startAnimation(rotate_backward);
+            fbSyncMasterData.startAnimation(fab_close);
+            fbDealerList.startAnimation(fab_close);
+            fbSyncMasterData.setClickable(false);
+            fbDealerList.setClickable(false);
+            isFabOpen = false;
+            Log.d("Raj", "close");
+
+        } else {
+
+            fbAdd.startAnimation(rotate_forward);
+            fbSyncMasterData.startAnimation(fab_open);
+            fbDealerList.startAnimation(fab_open);
+            fbSyncMasterData.setClickable(true);
+            fbDealerList.setClickable(true);
+            isFabOpen = true;
+            Log.d("Raj", "open");
+
+        }
+    }
 
     public void setFirstTime() {
 
@@ -355,6 +395,10 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                     Toast.makeText(getActivity(), "Please Make date & Time setting to automatic mode", Toast.LENGTH_SHORT).show();
                 }
             }
+        } else if (view == fbAdd) {
+            animateFAB();
+        } else if (view == fbDealerList) {
+            Toast.makeText(getActivity(), "List", Toast.LENGTH_SHORT).show();
         }
     }
 
