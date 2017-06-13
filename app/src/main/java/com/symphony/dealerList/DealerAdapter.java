@@ -5,32 +5,46 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
 import android.widget.TextView;
 
 import com.symphony.R;
 import com.symphony.model.MasterDataModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by indianic on 12/06/17.
  */
 
 public class DealerAdapter extends BaseAdapter {
-
+    private ArrayList<MasterDataModel> filteredList;
     private ArrayList<MasterDataModel> masterList;
+    private List<MasterDataModel> dictionaryWords;
     private Context context;
     private LayoutInflater inflater;
-    public DealerAdapter(Context context, ArrayList<MasterDataModel> masterList)
-    {
-        this.context=context;
-        this.masterList=masterList;
+    private CustomFilter mFilter;
+
+    public DealerAdapter(Context context, ArrayList<MasterDataModel> masterList) {
+        this.context = context;
+        this.masterList = masterList;
         inflater = LayoutInflater.from(this.context);
+        dictionaryWords = masterList;
+        filteredList = new ArrayList<>();
+        filteredList.addAll(dictionaryWords);
+        mFilter = new CustomFilter(DealerAdapter.this);
+
 
     }
+
+    public Filter getFilter() {
+        return mFilter;
+    }
+
     @Override
     public int getCount() {
-        return masterList.size();
+        return filteredList.size();
     }
 
     @Override
@@ -55,19 +69,54 @@ public class DealerAdapter extends BaseAdapter {
             mViewHolder = (MyViewHolder) convertView.getTag();
         }
 
-        MasterDataModel currentListData = masterList.get(i);
-
+        MasterDataModel currentListData = filteredList.get(i);
         mViewHolder.tvName.setText(currentListData.getName());
         mViewHolder.tvAddress.setText(currentListData.getAddr());
-
         return convertView;
     }
+
     private class MyViewHolder {
         TextView tvName, tvAddress;
 
         public MyViewHolder(View item) {
             tvName = (TextView) item.findViewById(R.id.dealer_name);
-            tvAddress = (TextView) item.findViewById(R.id.dealer_name);
+            tvAddress = (TextView) item.findViewById(R.id.dealer_address);
         }
     }
+
+    public class CustomFilter extends Filter {
+        private DealerAdapter mAdapter;
+
+        private CustomFilter(DealerAdapter mAdapter) {
+            super();
+            this.mAdapter = mAdapter;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            filteredList.clear();
+            final FilterResults results = new FilterResults();
+            if (constraint.length() == 0) {
+                filteredList.addAll(dictionaryWords);
+            } else {
+                final String filterPattern = constraint.toString().toLowerCase().trim();
+                for (final MasterDataModel mWords : dictionaryWords) {
+                    if (mWords.getName().toLowerCase().startsWith(filterPattern) || mWords.getAddr().toLowerCase().startsWith(filterPattern)) {
+                        filteredList.add(mWords);
+                    }
+                }
+            }
+            System.out.println("Count Number " + filteredList.size());
+            results.values = filteredList;
+            results.count = filteredList.size();
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            System.out.println("Count Number 2 " + ((List<MasterDataModel>) results.values).size());
+            this.mAdapter.notifyDataSetChanged();
+        }
+    }
+
 }

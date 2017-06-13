@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
@@ -61,6 +60,7 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
     private DeleteAllDistributer distributerObserver;
     private E_Sampark e_sampark;
     private Handler handler = new Handler();
+
 
     class DeleteAllDistributer extends ContentObserver {
         public DeleteAllDistributer(Handler h) {
