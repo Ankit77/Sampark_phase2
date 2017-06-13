@@ -532,6 +532,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                             Intent intentService = new Intent(getActivity(), SMSService.class);
                             intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
                             intentService.putExtra("checkstatus", false);
+                            intentService.putExtra("dealerlatlongid", e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID,""));
                             getActivity().startService(intentService);
                             setCheckIn();
                             editor.commit();
@@ -565,7 +566,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                                             Intent intentService = new Intent(getActivity(), SMSService.class);
                                             intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
                                             intentService.putExtra("checkstatus", true);
-                                            intentService.putExtra("getdealerlatlongId", masterDataModel.getDealerletlongid());
+                                            intentService.putExtra("dealerlatlongid", masterDataModel.getDealerletlongid());
                                             getActivity().startService(intentService);
                                             setCheckOut();
                                             e_sampark.getSharedPreferences().edit().putString(Const.PREF_CHECKIN_DEALERLATLONGID, masterDataModel.getDealerletlongid()).commit();
@@ -581,6 +582,20 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                 }
             } else {
                 Toast.makeText(getActivity(), "No nearby dealer available", Toast.LENGTH_LONG).show();
+                if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
+                    Intent intentService = new Intent(getActivity(), SMSService.class);
+                    intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
+                    intentService.putExtra("checkstatus", true);
+                    intentService.putExtra("dealerlatlongid", "");
+                    getActivity().startService(intentService);
+                }else
+                {
+                    Intent intentService = new Intent(getActivity(), SMSService.class);
+                    intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
+                    intentService.putExtra("checkstatus", false);
+                    intentService.putExtra("dealerlatlongid", "");
+                    getActivity().startService(intentService);
+                }
             }
         }
     }

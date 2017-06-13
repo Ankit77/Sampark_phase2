@@ -44,6 +44,7 @@ public class SMSService extends Service implements LocationListener {
     public static final String FETCH_LOCATION_INTENT = "FETCH_LOCATION_INTENT";
     public static final String SEND_REGISTER_USER_INTENT = "SEND_REGISTER_USER_INTENT";
     public static final String SEND_CHECK_SMS_INTENT = "SEND_CHECK_SMS_INTENT";
+    public static final String SEND_NO_DEALER_INTENT = "SEND_NO_DEALER_INTENT";
     public static String CENTRAL_MOBILE_NUMBER = "9510070111";
     private static String USER_MOBILE_NUMBER;
     public static final String GEO_LOCATION_FAILED = "com.symphony.GEO_LOCATION_FAILED";
@@ -131,12 +132,12 @@ public class SMSService extends Service implements LocationListener {
                     currentDateandTime = currentDateandTime.replace(".", "");
                     SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd a hh:mm:ss");
                     String timeStamp = timeStampFormat.format(new Date());
+                    String dealerlatlongid = bundle.getString("dealerlatlongid", "");
                     StringBuilder smsCheck = new StringBuilder();
                     if (bundle.getBoolean("checkstatus"))
                         smsCheck.append("CHECKIN,");
                     else
                         smsCheck.append("CHECKOUT,");
-                    String dealeraLatLongId = bundle.getString("getdealerlatlongId", "");
                     smsCheck.append(USER_MOBILE_NUMBER + ",");
                     smsCheck.append(addressLatLng + ",");
                     smsCheck.append(currentDateandTime);
@@ -151,7 +152,7 @@ public class SMSService extends Service implements LocationListener {
                         new SendSMSAsyc().execute(SEND_CHECK_SMS_INTENT,
                                 smsCheck.toString(),
                                 String.valueOf(bundle.getBoolean("checkstatus")),
-                                timeStamp, dealeraLatLongId
+                                timeStamp, dealerlatlongid
                         );
                     }
                 }
@@ -244,6 +245,8 @@ public class SMSService extends Service implements LocationListener {
 
     public class SendSMSAsyc extends AsyncTask<String, Void, Void> {
         String checkStatus = null;
+        Uri insert = null;
+        String lastsegment_path = "";
 
         @Override
         protected void onPreExecute() {
@@ -274,53 +277,59 @@ public class SMSService extends Service implements LocationListener {
 
             if (smsBody != null) {
 
-                if (!TextUtils.isEmpty(e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""))) {
-                    String checkTime[] = smsBody.split(",");
-                    timeStamp = params[3];
-                    ContentValues checkStatusValue = new ContentValues();
-                    checkStatusValue.put(DB.CHECK_SMS, smsBody);
-                    checkStatusValue.put(DB.CHECK_TIMESTAMP, timeStamp);
-                    if (distKey != null)
-                        checkStatusValue.put(DB.DIST_CHECK_KEY, distKey);
+                String checkTime[] = smsBody.split(",");
+                timeStamp = params[3];
+                final String dealerlatlongId = params[4];
+                ContentValues checkStatusValue = new ContentValues();
+                checkStatusValue.put(DB.CHECK_SMS, smsBody);
+                checkStatusValue.put(DB.CHECK_TIMESTAMP, timeStamp);
+                if (distKey != null)
+                    checkStatusValue.put(DB.DIST_CHECK_KEY, distKey);
 
-                    if (checkStatus != null)
-                        checkStatusValue.put(DB.CHECK_STATUS, checkStatus);
+                if (checkStatus != null)
+                    checkStatusValue.put(DB.CHECK_STATUS, checkStatus);
 
-                    checkStatusValue.put(DB.CHECK_FLAG, 1);
-                    checkStatusValue.put(DB.CHECK_DEALERLETLONGID, e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""));
-                    checkStatusValue.put(DB.CHECK_UNIQKEY, e_sampark.getSharedPreferences().getString(Const.PREF_VISIT_UNIQKEY, ""));
-                    final Uri insert = getBaseContext().getContentResolver().insert(Uri.parse("content://com.symphony.database.DBProvider/addCheckStatus"),
+                checkStatusValue.put(DB.CHECK_FLAG, 1);
+                checkStatusValue.put(DB.CHECK_DEALERLETLONGID, dealerlatlongId);
+                checkStatusValue.put(DB.CHECK_UNIQKEY, e_sampark.getSharedPreferences().getString(Const.PREF_VISIT_UNIQKEY, ""));
+                if (!TextUtils.isEmpty(dealerlatlongId)) {
+                    insert = getBaseContext().getContentResolver().insert(Uri.parse("content://com.symphony.database.DBProvider/addCheckStatus"),
                             checkStatusValue);
+                    lastsegment_path = insert.getLastPathSegment();
                     Log.e("SMSService", "sending on webservice update this id ->>>> " + insert.getLastPathSegment());
+                } else {
+                    lastsegment_path = "";
+                }
 
-                    httpManger = new HttpManager(SMSService.this);
-                    httpManger.sendCheckStatus(smsBody, e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""), insert.getLastPathSegment(),e_sampark.getSharedPreferences().getString(Const.PREF_VISIT_UNIQKEY,""), new HttpStatusListener() {
-                        CheckData checkData = new CheckData();
+                httpManger = new HttpManager(SMSService.this);
+                httpManger.sendCheckStatus(smsBody, dealerlatlongId, lastsegment_path, e_sampark.getSharedPreferences().getString(Const.PREF_VISIT_UNIQKEY, ""), new HttpStatusListener() {
+                    CheckData checkData = new CheckData();
 
-                        @Override
-                        public void onVerifyStatus(Boolean status) {
-                            // TODO Auto-generated method stub
-                            Log.e(SMSService.class.getSimpleName(), "onVerifyStatus");
+                    @Override
+                    public void onVerifyStatus(Boolean status) {
+                        // TODO Auto-generated method stub
+                        Log.e(SMSService.class.getSimpleName(), "onVerifyStatus");
 
-                        }
+                    }
 
-                        @Override
-                        public void onDistributerListLoad(Boolean status) {
-                            // TODO Auto-generated method stub
-                            Log.e(SMSService.class.getSimpleName(), "onDistributerListLoad");
-                        }
+                    @Override
+                    public void onDistributerListLoad(Boolean status) {
+                        // TODO Auto-generated method stub
+                        Log.e(SMSService.class.getSimpleName(), "onDistributerListLoad");
+                    }
 
-                        @Override
-                        public void onVerifyMobileStatus(Boolean status) {
-                            // TODO Auto-generated method stub
-                            Log.e(SMSService.class.getSimpleName(), "onVerifyMobileStatus");
-                        }
+                    @Override
+                    public void onVerifyMobileStatus(Boolean status) {
+                        // TODO Auto-generated method stub
+                        Log.e(SMSService.class.getSimpleName(), "onVerifyMobileStatus");
+                    }
 
-                        @Override
-                        public void onCheckStatus(CheckData checkData) {
-                            // TODO Auto-generated method stub
-                            this.checkData = checkData;
-                            checkData.setCheckId(insert.getLastPathSegment());
+                    @Override
+                    public void onCheckStatus(CheckData checkData) {
+                        // TODO Auto-generated method stub
+                        this.checkData = checkData;
+                        if (!TextUtils.isEmpty(dealerlatlongId)) {
+                            checkData.setCheckId(lastsegment_path);
                             checkData.setCheckFlag(false);
                             updateCheckFlag(checkData);
 
@@ -328,14 +337,16 @@ public class SMSService extends Service implements LocationListener {
                             if (!Boolean.parseBoolean(checkStatus)) {
                                 e_sampark.getSharedPreferences().edit().putString(Const.PREF_CHECKIN_DEALERLATLONGID, "").commit();
                             }
-
                         }
 
-                        @Override
-                        public void onTimeOut() {
-                            // TODO Auto-generated method stub
-                            WriteLog.E("", "");
-                            checkData.setCheckId(insert.getLastPathSegment());
+                    }
+
+                    @Override
+                    public void onTimeOut() {
+                        // TODO Auto-generated method stub
+                        WriteLog.E("", "");
+                        if (!TextUtils.isEmpty(dealerlatlongId)) {
+                            checkData.setCheckId(lastsegment_path);
                             checkData.setCheckStatus(false);
                             checkData.setCheckFlag(true);
                             updateCheckFlag(checkData);
@@ -344,44 +355,22 @@ public class SMSService extends Service implements LocationListener {
                                 e_sampark.getSharedPreferences().edit().putString(Const.PREF_CHECKIN_DEALERLATLONGID, "").commit();
                             }
                         }
+                    }
 
-                        @Override
-                        public void onNetworkDisconnect() {
-                            WriteLog.E("", "");
-                            // TODO Auto-generated method stub
-                            checkData.setCheckId(insert.getLastPathSegment());
+                    @Override
+                    public void onNetworkDisconnect() {
+                        WriteLog.E("", "");
+                        // TODO Auto-generated method stub
+                        if (!TextUtils.isEmpty(dealerlatlongId)) {
+                            checkData.setCheckId(lastsegment_path);
                             checkData.setCheckStatus(false);
                             checkData.setCheckFlag(true);
                             updateCheckFlag(checkData);
-                            //if checkin failed than clear dealerlatlongid
-
                         }
-                    });
-                } else {
-                    e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
-                    if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
-                        e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
-                    } else {
-                        e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
-                    }
-                    Intent intent = new Intent();
-                    intent.setAction("com.symphony.CHECKINOUTFAIL");
-                    sendBroadcast(intent);
-                    if (Boolean.parseBoolean(checkStatus)) {
-                        e_sampark.getSharedPreferences().edit().putString(Const.PREF_CHECKIN_DEALERLATLONGID, "").commit();
-                    }
-                }
-            } else {
+                        //if checkin failed than clear dealerlatlongid
 
-                e_sampark.getSharedPreferences().edit().putLong("TIME", 0).commit();
-                if (e_sampark.getSharedPreferences().getString("TAG", Const.CHECKIN).equalsIgnoreCase(Const.CHECKIN)) {
-                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKOUT).commit();
-                } else {
-                    e_sampark.getSharedPreferences().edit().putString("TAG", Const.CHECKIN).commit();
-                }
-                Intent intent = new Intent();
-                intent.setAction("com.symphony.CHECKINOUTFAIL");
-                sendBroadcast(intent);
+                    }
+                });
 
             }
             return null;
