@@ -1,6 +1,7 @@
 package com.symphony.http;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.symphony.E_Sampark;
 import com.symphony.utils.Const;
@@ -34,6 +35,7 @@ public class WSGetMeter {
         URL url = null;
         this.context = context;
         e_sampark = (E_Sampark) context.getApplicationContext();
+        Log.e("STRAT TIME", "" + System.currentTimeMillis());
         try {
             url = new URL(murl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -41,6 +43,7 @@ public class WSGetMeter {
             conn.setDoInput(true);
             conn.connect();
             InputStream stream = conn.getInputStream();
+            Log.e("END TIME", "" + System.currentTimeMillis());
             return isLogout(stream);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -85,6 +88,7 @@ public class WSGetMeter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.e("RESPONSE TIME", "" + System.currentTimeMillis());
         return isLogout;
     }
 

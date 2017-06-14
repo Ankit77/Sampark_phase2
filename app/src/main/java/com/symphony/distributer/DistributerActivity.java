@@ -576,18 +576,17 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         @Override
         protected ArrayList<MasterDataModel> doInBackground(String... strings) {
             WSGetMasterData wsGetMasterData = new WSGetMasterData();
-            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), DistributerActivity.this);
+            ArrayList<MasterDataModel> masterDataModels = wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), DistributerActivity.this);
+            if (masterDataModels != null && masterDataModels.size() > 0) {
+                e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
+                e_sampark.getSharedPreferences_masterdata().edit().putBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, false).commit();
+            }
+            return masterDataModels;
         }
 
         @Override
         protected void onPostExecute(ArrayList<MasterDataModel> masterDataModels) {
             super.onPostExecute(masterDataModels);
-
-
-            if (masterDataModels != null && masterDataModels.size() > 0) {
-                e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
-                e_sampark.getSharedPreferences_masterdata().edit().putBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, false).commit();
-            }
             new AsyncGetDeletedMasterData().execute();
         }
     }
@@ -601,18 +600,20 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         @Override
         protected ArrayList<String> doInBackground(Void... voids) {
             WSGetDeletedMasterData wsGetDeletedMasterData = new WSGetDeletedMasterData();
-            return wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), DistributerActivity.this);
+            ArrayList<String> masterIds = wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), DistributerActivity.this);
+            if (masterIds != null && masterIds.size() > 0) {
+                for (int i = 0; i < masterIds.size(); i++) {
+                    e_sampark.getSymphonyDB().deleteMasterData(masterIds.get(i));
+                }
+            }
+            return masterIds;
         }
 
         @Override
         protected void onPostExecute(ArrayList<String> masterIds) {
             super.onPostExecute(masterIds);
 
-            if (masterIds != null && masterIds.size() > 0) {
-                for (int i = 0; i < masterIds.size(); i++) {
-                    e_sampark.getSymphonyDB().deleteMasterData(masterIds.get(i));
-                }
-            }
+
             SymphonyUtils.dismissProgressDialog(progressDialog);
         }
     }

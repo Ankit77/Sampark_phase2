@@ -24,6 +24,7 @@ import java.util.ArrayList;
 public class WSGetDeletedMasterData {
     public ArrayList<String> executeTown(String lastdattime, String mobile, Context context) {
         String murl = "http://61.12.85.74:800/eSampark_Delete_Record.asp?NM=track_new&PASS=track123&xMNO=" + mobile + "&lastdate=" + lastdattime;
+
         WriteLog.E("url", murl);
         URL url = null;
         try {
