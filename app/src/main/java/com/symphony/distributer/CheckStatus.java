@@ -414,18 +414,18 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected ArrayList<MasterDataModel> doInBackground(String... strings) {
             WSGetMasterData wsGetMasterData = new WSGetMasterData();
-            return wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), getActivity());
+            ArrayList<MasterDataModel> masterDataModels = wsGetMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), getActivity());
+            if (masterDataModels != null && masterDataModels.size() > 0) {
+                e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
+                e_sampark.getSharedPreferences_masterdata().edit().putBoolean(Const.PREF_IS_LOAD_MASTER_DATA_FIRSTTIME, false).commit();
+            }
+            return masterDataModels;
         }
 
         @Override
         protected void onPostExecute(ArrayList<MasterDataModel> masterDataModels) {
             super.onPostExecute(masterDataModels);
-
-            if (masterDataModels != null && masterDataModels.size() > 0) {
-                e_sampark.getSymphonyDB().insertMasterData(masterDataModels);
-            }
-            asyncGetDeletedMasterData = new AsyncGetDeletedMasterData();
-            asyncGetDeletedMasterData.execute();
+            new AsyncGetDeletedMasterData().execute();
         }
     }
 
@@ -438,18 +438,18 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
         @Override
         protected ArrayList<String> doInBackground(Void... voids) {
             WSGetDeletedMasterData wsGetDeletedMasterData = new WSGetDeletedMasterData();
-            return wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), getActivity());
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<String> masterIds) {
-            super.onPostExecute(masterIds);
-
+            ArrayList<String> masterIds = wsGetDeletedMasterData.executeTown(SymphonyUtils.getDateTime(e_sampark.getSharedPreferences_masterdata().getString(Const.PREF_LAST_DATETIME, "")), prefs.getString("usermobilenumber", ""), getActivity());
             if (masterIds != null && masterIds.size() > 0) {
                 for (int i = 0; i < masterIds.size(); i++) {
                     e_sampark.getSymphonyDB().deleteMasterData(masterIds.get(i));
                 }
             }
+            return masterIds;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> masterIds) {
+            super.onPostExecute(masterIds);
             SymphonyUtils.dismissProgressDialog(progressDialog);
         }
     }
@@ -532,7 +532,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                             Intent intentService = new Intent(getActivity(), SMSService.class);
                             intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
                             intentService.putExtra("checkstatus", false);
-                            intentService.putExtra("dealerlatlongid", e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID,""));
+                            intentService.putExtra("dealerlatlongid", e_sampark.getSharedPreferences().getString(Const.PREF_CHECKIN_DEALERLATLONGID, ""));
                             getActivity().startService(intentService);
                             setCheckIn();
                             editor.commit();
@@ -588,8 +588,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                     intentService.putExtra("checkstatus", true);
                     intentService.putExtra("dealerlatlongid", "");
                     getActivity().startService(intentService);
-                }else
-                {
+                } else {
                     Intent intentService = new Intent(getActivity(), SMSService.class);
                     intentService.setAction(SMSService.SEND_CHECK_SMS_INTENT);
                     intentService.putExtra("checkstatus", false);
