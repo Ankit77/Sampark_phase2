@@ -195,7 +195,7 @@ public class DistributerInfo extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 
                         mDistributerListener.onGPSDialogOpen("Can not get GEO LOCATION , because GPS is disabled");
 

@@ -232,11 +232,11 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GPS_RESULT) {
-            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 mCheckStatusListener.onGPSOK();
 
                 Log.e("gps", resultCode + " " + requestCode + " " +
-                        mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                        mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
                 );
 
             }
@@ -296,31 +296,31 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
                                 valueOne.put(DB.DIST_LAT, latlng[0]);
                                 valueOne.put(DB.DIST_LNG, latlng[1]);
                             }
+                            getBaseContext().getContentResolver().insert
+                                    (Uri.parse("content://com.symphony.database.DBProvider/addDistributerMetaData"),
+                                            valueOne);
+
+
+                            Toast.makeText(this,
+                                    "Image Saved Successfully", Toast.LENGTH_SHORT)
+                                    .show();
+
+
+                            // delete record here
+
+
+                            int count = getBaseContext().getContentResolver()
+                                    .delete(Uri.parse("content://com.symphony.database.DBProvider/deleteDistributerById"),
+                                            DB.DIST_KEY + " = " + currentDistKey + " AND " + DB.DIST_ID + " = '" + currentDistId + "'",
+                                            null);
+
+
+                            Intent intent = new Intent(DistributerActivity.this, SyncManager.class);
+                            intent.setAction(SyncManager.SYNC_DISTRIBUTER_DATA);
+                            startService(intent);
+                        } else {
+                            Toast.makeText(DistributerActivity.this, "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
                         }
-
-
-                        getBaseContext().getContentResolver().insert
-                                (Uri.parse("content://com.symphony.database.DBProvider/addDistributerMetaData"),
-                                        valueOne);
-
-
-                        Toast.makeText(this,
-                                "Image Saved Successfully", Toast.LENGTH_SHORT)
-                                .show();
-
-
-                        // delete record here
-
-
-                        int count = getBaseContext().getContentResolver()
-                                .delete(Uri.parse("content://com.symphony.database.DBProvider/deleteDistributerById"),
-                                        DB.DIST_KEY + " = " + currentDistKey + " AND " + DB.DIST_ID + " = '" + currentDistId + "'",
-                                        null);
-
-
-                        Intent intent = new Intent(DistributerActivity.this, SyncManager.class);
-                        intent.setAction(SyncManager.SYNC_DISTRIBUTER_DATA);
-                        startService(intent);
 //                        super.onBackPressed();
                         //getSupportFragmentManager().popBackStack();
 
