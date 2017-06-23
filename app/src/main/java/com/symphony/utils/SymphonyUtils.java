@@ -14,7 +14,9 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.inforoeste.mocklocationdetector.MockLocationDetector;
 import com.symphony.E_Sampark;
 import com.symphony.R;
@@ -24,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -133,7 +136,7 @@ public class SymphonyUtils {
         }
     }
 
-    public static ProgressDialog displayProgressDialog(Context context,String message) {
+    public static ProgressDialog displayProgressDialog(Context context, String message) {
         ProgressDialog dialog = new ProgressDialog(context);
         dialog.setMessage(message);
         dialog.setCancelable(false);
@@ -249,11 +252,37 @@ public class SymphonyUtils {
             }
         }
     }
-    public static String getCurrentDate()
-    {
+
+    public static String getCurrentDate() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         String formattedDate = df.format(c.getTime());
         return formattedDate;
+    }
+
+    public static double calculationByDistance(LatLng StartP, LatLng EndP) {
+        int Radius = 6371;// radius of earth in Km
+        double lat1 = StartP.latitude;
+        double lat2 = EndP.latitude;
+        double lon1 = StartP.longitude;
+        double lon2 = EndP.longitude;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        double valueResult = Radius * c;
+        double km = valueResult / 1;
+        double meter1 = km * 1000;
+        DecimalFormat newFormat = new DecimalFormat("####");
+        double kmInDec = Integer.valueOf(newFormat.format(meter1));
+//        double meter = valueResult % 1000;
+//        int meterInDec = Integer.valueOf(newFormat.format(meter));
+//        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+//                + " Meter   " + meterInDec);
+
+        return kmInDec;
     }
 }

@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.symphony.E_Sampark;
 import com.symphony.R;
 import com.symphony.dealerList.DealerListActivity;
@@ -60,8 +61,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     private SharedPreferences.Editor editor;
     //    private LocationFailedReceiver locationFailedReceiver;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
-    //private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
+    //private static final long TIME_DIFFERENCE = 1000 * 60 * 10;
+    private static final long TIME_DIFFERENCE = 1000 * 60 * 1;
     private E_Sampark e_sampark;
     private ProgressDialog progressDialog;
     private FloatingActionButton fbSyncMasterData;
@@ -455,9 +456,9 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     }
 
     private class AsyncGetNearbyDealer extends AsyncTask<Void, Void, Void> {
-        private ArrayList<Float> closestDistanceList;
+        private ArrayList<Double> closestDistanceList;
         private ArrayList<MasterDataModel> masterDataList;
-        private HashMap<Float, MasterDataModel> hasmapList;
+        private HashMap<Double, MasterDataModel> hasmapList;
         private ProgressDialog progressDialog;
 
         @Override
@@ -483,7 +484,11 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                         Location destination = new Location("");
                         destination.setLatitude(Double.parseDouble(masterDataList.get(i).getLat()));
                         destination.setLongitude(Double.parseDouble(masterDataList.get(i).getLang()));
-                        float distanceInMeters = currentLocation.distanceTo(destination);
+//                        float distanceInMeters = currentLocation.distanceTo(destination);
+
+                        LatLng latLng_src = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                        LatLng latLng_dest = new LatLng(Double.parseDouble(masterDataList.get(i).getLat()), Double.parseDouble(masterDataList.get(i).getLang()));
+                        double distanceInMeters = SymphonyUtils.calculationByDistance(latLng_src, latLng_dest);
                         if (distanceInMeters < e_sampark.getSharedPreferences().getInt(Const.PREF_CHECKIN_METER, Const.DEFAULT_CHECKIN_METER)) {
                             hasmapList.put(distanceInMeters, masterDataList.get(i));
                             closestDistanceList.add(distanceInMeters);
