@@ -41,4 +41,5 @@ dependencies {
     compile project(':library')
     compile 'com.crittercism:crittercism-android-agent:+'
     compile 'com.github.florent37:camerafragment:1.0.5'
+    compile 'id.zelory:compressor:1.0.4'
 }

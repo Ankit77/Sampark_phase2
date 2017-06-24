@@ -55,11 +55,14 @@ import com.symphony.utils.Const;
 import com.symphony.utils.SymphonyUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import id.zelory.compressor.Compressor;
 
 
 public class DistributerActivity extends AppCompatActivity implements DistributerActivityListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -234,11 +237,11 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GPS_RESULT) {
-            if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 mCheckStatusListener.onGPSOK();
 
                 Log.e("gps", resultCode + " " + requestCode + " " +
-                        mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+                        mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 );
 
             }
@@ -259,11 +262,25 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
 
                     Bundle extras = data.getExtras();
                     if (extras != null) {
-
+                        File compressedImage = null;
                         String path = data.getExtras().getString("PATH", "");
                         if (!TextUtils.isEmpty(path)) {
 
-                            Bitmap bitmap = BitmapFactory.decodeFile(path);
+                            if (SymphonyUtils.getFileSizeInKB(path) > 500) {
+
+                                compressedImage = new Compressor.Builder(DistributerActivity.this)
+                                        .setMaxWidth(640)
+                                        .setMaxHeight(480)
+                                        .setQuality(75)
+                                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                        .setDestinationDirectoryPath(SymphonyUtils.getImagePath(DistributerActivity.this))
+                                        .build()
+                                        .compressToFile(new File(path));
+                            } else {
+                                compressedImage = new File(path);
+                            }
+
+                            Bitmap bitmap = BitmapFactory.decodeFile(compressedImage.getPath());
 //                        Bitmap bitmap = extras.getParcelable("data");
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);

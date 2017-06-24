@@ -14,7 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.util.Log;
+import android.os.Environment;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.inforoeste.mocklocationdetector.MockLocationDetector;
@@ -284,5 +284,28 @@ public class SymphonyUtils {
 //                + " Meter   " + meterInDec);
 
         return kmInDec;
+    }
+
+
+    public static long getFileSizeInKB(String path) {
+        // Get file from file name
+        File file = new File(path);
+
+// Get length of file in bytes
+        long fileSizeInBytes = file.length();
+// Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
+        long fileSizeInKB = fileSizeInBytes / 1024;
+// Convert the KB to MegaBytes (1 MB = 1024 KBytes)
+        long fileSizeInMB = fileSizeInKB / 1024;
+        return fileSizeInKB;
+    }
+
+    public static String getImagePath(Context context) {
+        String path = Environment.getExternalStorageDirectory() + "/" + context.getString(R.string.app_name) + "/Image";
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return path;
     }
 }
