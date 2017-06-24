@@ -15,13 +15,13 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +38,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.symphony.CameraActivity;
 import com.symphony.E_Sampark;
 import com.symphony.R;
 import com.symphony.SymphonyHome;
@@ -66,6 +67,7 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     public static final int GPS_RESULT = 100;
     public String messageText;
     private int GET_DISTRIBUTER_IMAGE_REQUEST = 120;
+    private static final int TAKE_PHOTO = 1001;
     private NotificationManager mNotificationManager;
     public static String currentLocation;
     public static final String LOCATION_RECEIVER = "com.symphony.locationreceiver";
@@ -242,7 +244,7 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
             }
 
 
-        } else if (requestCode == GET_DISTRIBUTER_IMAGE_REQUEST) {
+        } else if (requestCode == TAKE_PHOTO) {
 
 
             if (resultCode == RESULT_OK) {
@@ -257,74 +259,79 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
 
                     Bundle extras = data.getExtras();
                     if (extras != null) {
-                        Bitmap bitmap = extras.getParcelable("data");
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        byte imageInByte[] = stream.toByteArray();
-                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
-                                Locale.getDefault()).format(new Date());
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy-hh:mm:ss a");
-                        String currentDateandTime = sdf.format(new Date()).replace(" ", "");
-                        currentDateandTime = currentDateandTime.replace(".", "");
-                        SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                        String timeStampSort = timeStampFormat.format(new Date());
+
+                        String path = data.getExtras().getString("PATH", "");
+                        if (!TextUtils.isEmpty(path)) {
+
+                            Bitmap bitmap = BitmapFactory.decodeFile(path);
+//                        Bitmap bitmap = extras.getParcelable("data");
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                            byte imageInByte[] = stream.toByteArray();
+                            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                                    Locale.getDefault()).format(new Date());
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy-hh:mm:ss a");
+                            String currentDateandTime = sdf.format(new Date()).replace(" ", "");
+                            currentDateandTime = currentDateandTime.replace(".", "");
+                            SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                            String timeStampSort = timeStampFormat.format(new Date());
 
 
-                        if (prefs != null) {
+                            if (prefs != null) {
 
-                            currentDistId = prefs.getString("tdistid", null);
-                            currentDistKey = prefs.getString("tdistkey", null);
-                            currentDistName = prefs.getString("tdistname", null);
+                                currentDistId = prefs.getString("tdistid", null);
+                                currentDistKey = prefs.getString("tdistkey", null);
+                                currentDistName = prefs.getString("tdistname", null);
 
-                        }
-                        ContentValues valueOne = new ContentValues();
-                        valueOne.put(DB.DIST_META_ID, currentDistId);
-                        valueOne.put(DB.DIST_NAME, currentDistName);
-
-                        valueOne.put(DB.DIST_IMG, imageInByte);
-                        valueOne.put(DB.DIST_IMG_URL, currentDistId + "_" + timeStamp + ".jpg");
-                        valueOne.put(DB.DIST_FLAG, 1);
-                        valueOne.put(DB.DIST_TIME, currentDateandTime);
-                        valueOne.put(DB.DIST_TIMESTAMP, timeStampSort);
-
-
-                        if (!TextUtils.isEmpty(SMSService.addressLatLng)) {
-
-                            String[] latlng = SMSService.addressLatLng.split(",");
-
-                            if (latlng.length == 2) {
-                                valueOne.put(DB.DIST_LAT, latlng[0]);
-                                valueOne.put(DB.DIST_LNG, latlng[1]);
                             }
-                            getBaseContext().getContentResolver().insert
-                                    (Uri.parse("content://com.symphony.database.DBProvider/addDistributerMetaData"),
-                                            valueOne);
+                            ContentValues valueOne = new ContentValues();
+                            valueOne.put(DB.DIST_META_ID, currentDistId);
+                            valueOne.put(DB.DIST_NAME, currentDistName);
+
+                            valueOne.put(DB.DIST_IMG, imageInByte);
+                            valueOne.put(DB.DIST_IMG_URL, currentDistId + "_" + timeStamp + ".jpg");
+                            valueOne.put(DB.DIST_FLAG, 1);
+                            valueOne.put(DB.DIST_TIME, currentDateandTime);
+                            valueOne.put(DB.DIST_TIMESTAMP, timeStampSort);
 
 
-                            Toast.makeText(this,
-                                    "Image Saved Successfully", Toast.LENGTH_SHORT)
-                                    .show();
+                            if (!TextUtils.isEmpty(SMSService.addressLatLng)) {
+
+                                String[] latlng = SMSService.addressLatLng.split(",");
+
+                                if (latlng.length == 2) {
+                                    valueOne.put(DB.DIST_LAT, latlng[0]);
+                                    valueOne.put(DB.DIST_LNG, latlng[1]);
+                                }
+                                getBaseContext().getContentResolver().insert
+                                        (Uri.parse("content://com.symphony.database.DBProvider/addDistributerMetaData"),
+                                                valueOne);
 
 
-                            // delete record here
+                                Toast.makeText(this,
+                                        "Image Saved Successfully", Toast.LENGTH_SHORT)
+                                        .show();
 
 
-                            int count = getBaseContext().getContentResolver()
-                                    .delete(Uri.parse("content://com.symphony.database.DBProvider/deleteDistributerById"),
-                                            DB.DIST_KEY + " = " + currentDistKey + " AND " + DB.DIST_ID + " = '" + currentDistId + "'",
-                                            null);
+                                // delete record here
 
 
-                            Intent intent = new Intent(DistributerActivity.this, SyncManager.class);
-                            intent.setAction(SyncManager.SYNC_DISTRIBUTER_DATA);
-                            startService(intent);
-                        } else {
-                            Toast.makeText(DistributerActivity.this, "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
-                        }
+                                int count = getBaseContext().getContentResolver()
+                                        .delete(Uri.parse("content://com.symphony.database.DBProvider/deleteDistributerById"),
+                                                DB.DIST_KEY + " = " + currentDistKey + " AND " + DB.DIST_ID + " = '" + currentDistId + "'",
+                                                null);
+
+
+                                Intent intent = new Intent(DistributerActivity.this, SyncManager.class);
+                                intent.setAction(SyncManager.SYNC_DISTRIBUTER_DATA);
+                                startService(intent);
+                            } else {
+                                Toast.makeText(DistributerActivity.this, "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
+                            }
 //                        super.onBackPressed();
-                        //getSupportFragmentManager().popBackStack();
+                            //getSupportFragmentManager().popBackStack();
 
-
+                        }
                     }
 
 
@@ -434,8 +441,12 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
         if (getApplicationContext().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
 
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent, GET_DISTRIBUTER_IMAGE_REQUEST);
+//            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//            startActivityForResult(intent, GET_DISTRIBUTER_IMAGE_REQUEST);
+
+            Intent intent = new Intent(DistributerActivity.this, CameraActivity.class);
+            startActivityForResult(intent, TAKE_PHOTO);
+
 
         } else {
             Toast.makeText(this, "Camera is not supported on this device", Toast.LENGTH_LONG).show();

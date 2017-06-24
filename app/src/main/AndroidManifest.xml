@@ -122,7 +122,10 @@
             android:name=".report.SymphonyReport"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-
+        <activity
+            android:name=".CameraActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <!--<receiver android:name=".distributer.CheckStatus$LocationFailedReceiver"></receiver>-->
 
         <receiver

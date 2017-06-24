@@ -74,8 +74,8 @@ public class WSGetMeter {
                         break;
                     case XmlPullParser.END_TAG:
                         if (tagname.equalsIgnoreCase("Meter")) {
-                           // e_sampark.getSharedPreferences().edit().putInt(Const.PREF_CHECKIN_METER, Integer.parseInt(text)).commit();
-                            e_sampark.getSharedPreferences().edit().putInt(Const.PREF_CHECKIN_METER, 400).commit();
+                            e_sampark.getSharedPreferences().edit().putInt(Const.PREF_CHECKIN_METER, Integer.parseInt(text)).commit();
+                           // e_sampark.getSharedPreferences().edit().putInt(Const.PREF_CHECKIN_METER, 400).commit();
                         }
                         break;
                     default:
