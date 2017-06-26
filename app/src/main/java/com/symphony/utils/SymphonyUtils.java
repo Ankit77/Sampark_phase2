@@ -283,7 +283,7 @@ public class SymphonyUtils {
 //        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
 //                + " Meter   " + meterInDec);
 
-        return kmInDec;
+        return meter1;
     }
 
 

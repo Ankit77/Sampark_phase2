@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class CheckStatus extends Fragment implements CheckStatusListener, LocationListener, SMSService.OnStatusFailedListner, OnClickListener {
 
@@ -166,7 +167,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     @Override
     public void onResume() {
         super.onResume();
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
         getActivity().registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter("ENABLE_BUTTON"));
         getActivity().registerReceiver(checkinoutFailedReceiver, new IntentFilter("com.symphony.CHECKINOUTFAIL"));
@@ -369,7 +370,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
             }
 
         } else if (view == checkStatus) {
-            if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 mDistributerListener.onGPSDialogOpen("Can not CHECK IN/OUT , because GPS is disabled");
             } else {
                 if (SymphonyUtils.isAutomaticDateTime(getActivity())) {
@@ -379,13 +380,13 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                     } else {
 
                         if (!SymphonyUtils.isFackLocation(getActivity(), SMSService.location)) {
-                            Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                             if (location != null) {
                                 AsyncGetNearbyDealer asyncGetNearbyDealer = new AsyncGetNearbyDealer();
                                 asyncGetNearbyDealer.execute();
 
                             } else {
-                                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
+                                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DISTANCE_CHANGE_FOR_UPDATES, CheckStatus.this);
                                 Toast.makeText(getActivity(), "Not able to get the geocode , please try after a while", Toast.LENGTH_SHORT).show();
                             }
                         } else {
@@ -456,9 +457,9 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
     }
 
     private class AsyncGetNearbyDealer extends AsyncTask<Void, Void, Void> {
-        private ArrayList<Double> closestDistanceList;
+        private LinkedList<Double> closestDistanceList;
         private ArrayList<MasterDataModel> masterDataList;
-        private HashMap<Double, MasterDataModel> hasmapList;
+        private LinkedList<MasterDataModel> hasmapList;
         private ProgressDialog progressDialog;
 
         @Override
@@ -473,8 +474,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
              * Algoridham for finding closest branch from check in location
              */
             masterDataList = new ArrayList<>();
-            closestDistanceList = new ArrayList<>();
-            hasmapList = new HashMap<>();
+            closestDistanceList = new LinkedList<>();
+            hasmapList = new LinkedList<>();
             masterDataList = e_sampark.getSymphonyDB().getMasterDataList();
             Location currentLocation = SMSService.location;
             if (masterDataList != null && masterDataList.size() > 0) {
@@ -490,7 +491,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                         LatLng latLng_dest = new LatLng(Double.parseDouble(masterDataList.get(i).getLat()), Double.parseDouble(masterDataList.get(i).getLang()));
                         double distanceInMeters = SymphonyUtils.calculationByDistance(latLng_src, latLng_dest);
                         if (distanceInMeters < e_sampark.getSharedPreferences().getInt(Const.PREF_CHECKIN_METER, Const.DEFAULT_CHECKIN_METER)) {
-                            hasmapList.put(distanceInMeters, masterDataList.get(i));
+                            hasmapList.add(masterDataList.get(i));
                             closestDistanceList.add(distanceInMeters);
                         }
                         WriteLog.E(SMSService.class.getSimpleName(), "Distance2 = " + currentLocation.getLongitude() + "," + currentLocation.getLatitude());
@@ -516,8 +517,8 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                 ArrayList<String> dealerlatlongIds = new ArrayList<>();
                 String[] dealername = new String[closestDistanceList.size()];
                 for (int i = 0; i < closestDistanceList.size(); i++) {
-                    dealername[i] = hasmapList.get(closestDistanceList.get(i)).getName();
-                    dealerlatlongIds.add(hasmapList.get(closestDistanceList.get(i)).getDealerletlongid());
+                    dealername[i] = hasmapList.get(i).getName();
+                    dealerlatlongIds.add(hasmapList.get(i).getDealerletlongid());
                 }
                 if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKOUT)) {
 
@@ -558,7 +559,7 @@ public class CheckStatus extends Fragment implements CheckStatusListener, Locati
                                     dialog.dismiss();
                                     int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                                     if (checkStatus.getTag().toString().equalsIgnoreCase(Const.CHECKIN)) {
-                                        MasterDataModel masterDataModel = hasmapList.get(closestDistanceList.get(selectedPosition));
+                                        MasterDataModel masterDataModel = hasmapList.get(selectedPosition);
                                         Calendar calendar = Calendar.getInstance();
                                         checkStatus.setEnabled(false);
                                         checkStatus.setVisibility(View.GONE);

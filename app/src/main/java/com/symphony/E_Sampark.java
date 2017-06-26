@@ -29,8 +29,8 @@ public class E_Sampark extends Application {
         super.onCreate();
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
         sharedPreferences_masterdata = getSharedPreferences("masterData", Context.MODE_PRIVATE);
-//        symphonyDB = new SymphonyDB(getApplicationContext());
-////        symphonyDB.openDataBase();
+        symphonyDB = new SymphonyDB(getApplicationContext());
+        symphonyDB.openDataBase();
         Intent intentLocationService = new Intent(getApplicationContext(), MyService.class);
         startService(intentLocationService);
 //        if (!sharedPreferences.getBoolean(Const.PREF_ISSYNCDATA, false)) {

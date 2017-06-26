@@ -237,11 +237,11 @@ public class DistributerActivity extends AppCompatActivity implements Distribute
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GPS_RESULT) {
-            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 mCheckStatusListener.onGPSOK();
 
                 Log.e("gps", resultCode + " " + requestCode + " " +
-                        mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                        mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
                 );
 
             }

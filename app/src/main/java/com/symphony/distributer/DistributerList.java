@@ -158,7 +158,8 @@ public class DistributerList extends Fragment implements LoaderManager.LoaderCal
 
 
         if (searchTerm == null || searchTerm == "" || DistributerInfo.isDeleted == true) {
-            getActivity().getSupportLoaderManager().initLoader(DISTRIBUTER_INFO.ID, null, DistributerList.this);
+            getActivity().getSupportLoaderManager().restartLoader(DISTRIBUTER_INFO.ID, null,
+                    DistributerList.this);
         } else {
             getActivity().getSupportLoaderManager().initLoader(DISTRIBUTER_INFO.ID, null, DistributerList.this);
         }

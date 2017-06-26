@@ -101,7 +101,7 @@ public class SymphonyDB extends SQLiteOpenHelper {
     }
 
     public void deleteMasterData(String dealerletlong_id) {
-
+        openDataBase();
         try {
             sqLiteDatabase.delete(DB.MASTER_TABLE, DB.COLUME_MASTER_DEALERLETLONG_ID + "=?", new String[]{dealerletlong_id});
         } catch (Exception e) {
